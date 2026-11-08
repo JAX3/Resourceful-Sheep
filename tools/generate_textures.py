@@ -38,161 +38,184 @@ def shade(c, f):
 CLEAR = (0, 0, 0, 0)
 
 # ---------------------------------------------------------------------------
-# Wool item: a fluffy wound skein. Shape map: '.' empty, 'o' outline, 1-4 shade
-# levels (1 = darkest .. 4 = brightest), 'h' highlight. Hand-designed 16x16.
+# Resource wool items (16x16), in the same cartoon style as the Mechanical
+# Separator / Mycelial Power: a thick dark outline, the flat resource colour
+# with one highlight and one shadow tone, yarn-strand arcs, and a chunky
+# per-resource accent stamped on top.
+#   O outline   H highlight   M base colour   S shadow / strand
 # ---------------------------------------------------------------------------
-WOOL_SHAPE = [
-    "................",
-    "......oooo......",
-    "....oo4344oo....",
-    "...o44433444o...",
-    "..o3443344443o..",
-    "..o4332334433o..",
-    ".o344433343343o.",
-    ".o433444332443o.",
-    ".o332343444332o.",
-    ".o244333433432o.",
-    "..o3443323342o..",
-    "..o2334443322o..",
-    "...o22332222o...",
-    "....oo2112oo....",
-    "......oooo......",
-    "................",
-]
+WOOL_OUTLINE = hexc("#231c35")
 
-# Strand lines across the skein (used for "wound yarn" look and resource strands).
-STRANDS = [(4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11),
-           (6, 3), (7, 4), (8, 5), (9, 6), (10, 7), (11, 8), (12, 9)]
+WOOL_BALL = [
+    "................",
+    ".....OOOOOO.....",
+    "...OOHHHHHHOO...",
+    "..OHHHMMMMSHSO..",
+    ".OHHMMMMMSMMMSO.",
+    ".OHMMMMMSMMMSMSO",
+    "OHHMMMMSMMMSMMSO",
+    "OHMMMMSMMMSMMMSO",
+    "OHMMMSMMMSMMMMSO",
+    "OHMMSMMMSMMMMSSO",
+    "OMMSMMMSMMMMSMSO",
+    ".OSMMMSMMMMSMSO.",
+    ".OSMMSMMMMSMSSO.",
+    "..OSSMMMMSSSSO..",
+    "...OOSSSSSSOO...",
+    ".....OOOOOO.....",
+]
 
 
 def wool_palette(base):
-    """4 shades from dark to light plus outline."""
     return {
-        "o": shade(base, 0.45),
-        "1": shade(base, 0.62),
-        "2": shade(base, 0.78),
-        "3": shade(base, 0.92),
-        "4": mix(base, (255, 255, 255, 255), 0.18),
+        "O": WOOL_OUTLINE,
+        "H": mix(base, (255, 255, 255, 255), 0.38),
+        "M": base,
+        "S": shade(base, 0.68),
     }
 
 
 def draw_wool(base):
     img = Image.new("RGBA", (16, 16), CLEAR)
     pal = wool_palette(base)
-    for y, row in enumerate(WOOL_SHAPE):
+    for y, row in enumerate(WOOL_BALL):
         for x, ch in enumerate(row):
             if ch in pal:
-                c = pal[ch]
-                # Wound-yarn look: diagonal winding lines across the skein.
-                if ch not in "o" and (x + y) % 4 == 0:
-                    c = shade(c, 0.84)
-                elif ch not in "o" and (x - y) % 7 == 0:
-                    c = mix(c, (255, 255, 255, 255), 0.12)
-                img.putpixel((x, y), c)
+                img.putpixel((x, y), pal[ch])
     return img
 
 
 def inside(x, y):
-    return WOOL_SHAPE[y][x] not in ".o"
+    return 0 <= x < 16 and 0 <= y < 16 and WOOL_BALL[y][x] not in ".O"
 
 
 def put(img, x, y, c):
-    if 0 <= x < 16 and 0 <= y < 16 and inside(x, y):
+    if inside(x, y):
         img.putpixel((x, y), c)
 
 
-# Resource definitions for the 12 built-in wool items: base colour + decorator.
-def deco_metal_strands(light, dark):
-    def f(img, rnd):
-        for (x, y) in STRANDS:
-            put(img, x, y, light if (x + y) % 3 else dark)
-        for (x, y) in [(5, 9), (6, 10), (9, 4), (10, 5)]:
-            put(img, x, y, light)
+def stamp(img, ox, oy, rows, pal):
+    """Draws a small character grid at (ox, oy); '.' is skipped, only inside the ball."""
+    for dy, row in enumerate(rows):
+        for dx, ch in enumerate(row):
+            if ch in pal:
+                put(img, ox + dx, oy + dy, pal[ch])
+
+
+WHITE = hexc("#ffffff")
+
+# Chunky accent motifs (A = accent colour, a = accent shadow, G = shine, O = outline)
+GEM = [".O.", "OGO", "OAa", ".O."]
+GEM_BIG = ["..O..", ".OGO.", "OGAaO", ".OaO.", "..O.."]
+STAR = ["..G..", ".GAG.", "GAGAG", ".GAG.", "..G.."]
+DOT = [".A.", "AGA", ".a."]
+CHUNK = ["OO.", "OaO", ".OO"]
+
+
+def deco_strands():
+    """Bright metal threads following the yarn arcs, with glints."""
+    def f(img, pal):
+        for i in range(8):
+            put(img, 10 - i, 3 + i, pal["A"])      # main bright thread
+            put(img, 11 - i, 3 + i, pal["a"])
+        for i in range(6):
+            put(img, 13 - i, 6 + i, pal["A"])      # second thread
+        for (x, y) in [(8, 5), (5, 8), (11, 8), (4, 4)]:
+            put(img, x, y, pal["G"])
     return f
 
 
-def deco_sparkle(spark, glow):
-    def f(img, rnd):
-        for (x, y) in [(5, 5), (10, 4), (11, 9), (6, 10), (8, 7)]:
-            put(img, x, y, spark)
-            for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-                if rnd.random() < 0.6:
-                    put(img, x + dx, y + dy, glow)
+def deco_sparkles():
+    def f(img, pal):
+        stamp(img, 3, 4, STAR, pal)
+        stamp(img, 8, 8, STAR, pal)
+        put(img, 11, 4, pal["G"])
     return f
 
 
-def deco_crystals(c1, c2, edge):
-    def f(img, rnd):
-        for (x, y) in [(4, 6), (9, 4), (11, 8), (6, 10), (8, 8)]:
-            put(img, x, y, c1)
-            put(img, x + 1, y, c2)
-            put(img, x, y + 1, c2)
-            put(img, x + 1, y + 1, edge)
+def deco_gems(big_at, small_at):
+    def f(img, pal):
+        stamp(img, big_at[0], big_at[1], GEM_BIG, pal)
+        for (x, y) in small_at:
+            stamp(img, x, y, GEM, pal)
     return f
 
 
-def deco_flecks(colors, count, seed):
-    def f(img, rnd):
-        r = random.Random(seed)
-        n = 0
-        while n < count:
-            x, y = r.randint(2, 13), r.randint(2, 12)
-            if inside(x, y):
-                put(img, x, y, colors[n % len(colors)])
-                n += 1
+def deco_dots(positions):
+    def f(img, pal):
+        for (x, y) in positions:
+            stamp(img, x, y, DOT, pal)
     return f
 
 
-def deco_wood(ring, dark):
-    def f(img, rnd):
-        for (x, y) in STRANDS[:8]:
-            put(img, x, y, dark)
-        for (x, y) in [(4, 8), (5, 8), (9, 10), (10, 10), (7, 5), (8, 5)]:
-            put(img, x, y, ring)
+def deco_spots(extra=None):
+    """Oxidisation / speckle spots plus an optional second colour."""
+    def f(img, pal):
+        for (x, y) in [(4, 6), (10, 5), (8, 10)]:
+            stamp(img, x, y, ["AA", "Aa"], pal)
+        if extra:
+            for (x, y) in [(6, 9), (11, 9)]:
+                put(img, x, y, extra)
     return f
 
 
-def deco_stone(dark, light):
-    def f(img, rnd):
-        r = random.Random(42)
-        for _ in range(14):
-            x, y = r.randint(2, 13), r.randint(2, 12)
-            put(img, x, y, dark if r.random() < 0.6 else light)
+def deco_chunks():
+    def f(img, pal):
+        stamp(img, 4, 5, CHUNK, pal)
+        stamp(img, 9, 9, CHUNK, pal)
+        for (x, y) in [(5, 6), (10, 10), (11, 5)]:
+            put(img, x, y, pal["G"])
+    return f
+
+
+def deco_rings():
+    def f(img, pal):
+        for x in range(3, 13):
+            put(img, x, 6, pal["a"])
+            put(img, x, 10, pal["a"])
+        for (x, y) in [(5, 8), (6, 8), (10, 8), (7, 4)]:
+            put(img, x, y, pal["A"])
     return f
 
 
 BUILTIN = {
-    # name: (wool colour, accent colour, decorator)
-    "iron": ("#C8C8C8", "#F4F4F4", deco_metal_strands(hexc("#FFFFFF"), hexc("#8A8A8A"))),
-    "gold": ("#F2C230", "#FFF6A8", deco_sparkle(hexc("#FFFFE0"), hexc("#FFE45C"))),
-    "copper": ("#D27A4E", "#5FD3B5", deco_metal_strands(hexc("#F4A27A"), hexc("#3FA58A"))),
-    "diamond": ("#7FE6E0", "#E8FFFF", deco_crystals(hexc("#D9FFFF"), hexc("#3DCBD0"), hexc("#1F8C93"))),
-    "emerald": ("#3FC46A", "#B9FFC9", deco_crystals(hexc("#B9FFC9"), hexc("#17A346"), hexc("#0A6B2C"))),
-    "redstone": ("#9E1D1D", "#FF3B2B", deco_flecks([hexc("#FF4A3A"), hexc("#FFB0A0"), hexc("#FF2010")], 12, 7)),
-    "lapis": ("#2F55B5", "#9DB8FF", deco_flecks([hexc("#C9D7FF"), hexc("#F2D45C"), hexc("#6F8FE8")], 10, 11)),
-    "coal": ("#3A3A3E", "#8C8C96", deco_flecks([hexc("#1A1A1C"), hexc("#7A7A84"), hexc("#AAAAB4")], 13, 5)),
-    "netherite": ("#4A3E44", "#9B6FB0", deco_metal_strands(hexc("#B58BD0"), hexc("#2A2228"))),
-    "stone": ("#8E8E8E", "#B5B5B5", deco_stone(hexc("#5E5E5E"), hexc("#BDBDBD"))),
-    "wood": ("#A8834F", "#6B4F2A", deco_wood(hexc("#D2B07A"), hexc("#6B4F2A"))),
-    "quartz": ("#EDE6DC", "#FFFFFF", deco_crystals(hexc("#FFFFFF"), hexc("#D8CCBE"), hexc("#B5A898"))),
+    # name: (wool colour, accent colour, decorator). Keep colours in sync with tools/generate_data.py.
+    "iron": ("#C8C8C8", "#F4F4F4", deco_strands()),
+    "gold": ("#F2C230", "#FFF6A8", deco_sparkles()),
+    "copper": ("#D27A4E", "#5FD3B5", deco_spots()),
+    "diamond": ("#7FE6E0", "#4ED8E8", deco_gems((5, 5), [(10, 3)])),
+    "emerald": ("#3FC46A", "#2FE07A", deco_gems((5, 5), [(10, 3)])),
+    "redstone": ("#9E1D1D", "#FF3B2B", deco_dots([(3, 4), (9, 3), (5, 9), (10, 8)])),
+    "lapis": ("#2F55B5", "#9DB8FF", deco_spots(hexc("#F2D45C"))),
+    "coal": ("#3A3A3E", "#8C8C96", deco_chunks()),
+    "netherite": ("#4A3E44", "#B58BD0", deco_strands()),
+    "stone": ("#8E8E8E", "#5E5E5E", deco_chunks()),
+    "wood": ("#A8834F", "#D2B07A", deco_rings()),
+    "quartz": ("#EDE6DC", "#FFFFFF", deco_gems((6, 6), [(10, 3)])),
 }
+
+
+def accent_palette(accent):
+    return {"A": accent, "a": shade(accent, 0.7), "G": mix(accent, WHITE, 0.6), "O": WOOL_OUTLINE}
 
 
 def generate_wool_items():
     for name, (base, accent, deco) in BUILTIN.items():
         img = draw_wool(hexc(base))
-        deco(img, random.Random(sum(map(ord, name))))
+        deco(img, accent_palette(hexc(accent)))
         img.save(out(f"item/{name}_wool.png"))
-    # Fallback (tinted) layers for data-pack resources: greyscale wool + accent flecks.
+    # Fallback layers for data-pack resources. layer0 (tinted with wool_color) is a light-grey ball;
+    # the outline is drawn on layer1 (tinted with accent_color) would recolour it, so the outline stays
+    # on layer0 in near-black, which tinting keeps dark.
     grey = draw_wool(hexc("#E6E6E6"))
-    for (x, y) in STRANDS[::2]:
-        put(grey, x, y, hexc("#FFFFFF"))
+    for y in range(16):
+        for x in range(16):
+            if WOOL_BALL[y][x] == "O":
+                grey.putpixel((x, y), hexc("#2a2a2a"))
     grey.save(out("item/resource_wool_base.png"))
     acc = Image.new("RGBA", (16, 16), CLEAR)
-    for (x, y) in [(5, 5), (10, 4), (11, 9), (6, 10), (8, 7), (4, 8), (12, 6)]:
-        acc.putpixel((x, y), (255, 255, 255, 255))
-    for (x, y) in [(6, 5), (10, 5), (7, 10), (9, 7)]:
-        acc.putpixel((x, y), (200, 200, 200, 255))
+    deco_sparkles()(acc, {"A": hexc("#e6e6e6"), "a": hexc("#a0a0a0"), "G": WHITE, "O": hexc("#3a3a3a")})
+    # stamp() only draws inside the ball shape, which also holds for this transparent layer.
     acc.save(out("item/resource_wool_overlay.png"))
 
 
