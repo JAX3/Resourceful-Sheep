@@ -62,6 +62,7 @@ public final class ResourcefulSheep {
 
         NeoForge.EVENT_BUS.register(SheepResourceManager.Events.class);
         NeoForge.EVENT_BUS.register(SheepInfusionEvents.class);
+        NeoForge.EVENT_BUS.register(com.jax3.resourcefulsheep.command.ResourcefulSheepCommand.class);
     }
 
     public static Identifier id(String path) {

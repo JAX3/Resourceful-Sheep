@@ -235,6 +235,25 @@ Definitions live in `data/<namespace>/resourcefulsheep/sheep_resources/<name>.js
 
 **Examples.** Ready-made definitions for **Tin, Lead, Silver, Nickel, Uranium, Osmium, Aluminium** and **Amethyst** are in `examples/resource_definitions/`. `examples/datapack/` is the same set packaged as a drop-in data pack, plus an example cobweb separating recipe. Copy the folder into `<world>/datapacks/`.
 
+### Auto-generating resources for every material
+You don't have to write a definition for every metal by hand. In a world with cheats on (operator level 2), run:
+
+| Command | What it does |
+|---|---|
+| `/resourcefulsheep preview` | Lists what would be generated, without changing anything |
+| `/resourcefulsheep generate` | Creates a resource for every material that doesn't have one yet, saves them into the world data pack `resourcefulsheep_generated`, and reloads |
+| `/resourcefulsheep generate all` | Same, but also regenerates materials that already have a definition |
+| `/resourcefulsheep list` | Lists every loaded resource |
+
+How the generator chooses each value:
+- **Materials:** it scans the `c:storage_blocks/<material>` item tags that vanilla, NeoForge and nearly every content mod fill. With Mekanism, Thermal and similar mods installed, that covers tin, lead, osmium, uranium, silver and so on. Raw ore blocks (`raw_*`) and anything already defined are skipped.
+- **Feeding item:** the storage-block tag, so every mod's variant of the block works.
+- **Output:** the first item in `c:raw_materials/`, `c:ingots/`, `c:gems/` or `c:dusts/<material>`. If none exist, it uses an item named after the material (for example `slime_ball` or `resin_clump`), and failing that, the block itself.
+- **Uses:** 9 when a block is broken down into one of those units (a block holds 9), otherwise 1.
+- **Colours:** taken from the block's map colour. The category comes from whichever tag supplied the output.
+
+Generated files are ordinary JSON in `<world>/datapacks/resourcefulsheep_generated/`. You can edit them freely, but re-running `generate` overwrites that folder. In plain vanilla this adds Bone Meal, Dried Kelp, Resin, Slime and Wheat.
+
 ### Explicit separator recipes
 Use the recipe type `resourcefulsheep:separating` to process any item, or to override how a particular wool is handled:
 ```json

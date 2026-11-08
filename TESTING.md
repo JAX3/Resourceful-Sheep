@@ -13,7 +13,7 @@ Environment:
 ## Unit tests ✅ (`./gradlew test`): 5/5 passed
 Relative side mapping for every facing, side-name parsing, redstone modes, infusion countdown and cooldown, and permanent infusions.
 
-## In-world game tests ✅ (`./gradlew runGameTestServer`): all 20 required tests passed
+## In-world game tests ✅ (`./gradlew runGameTestServer`): all 21 required tests passed
 These run on a **dedicated-server** game test server, which also confirms the mod loads with no client classes present.
 
 | Test | Verifies |
@@ -36,6 +36,7 @@ These run on a **dedicated-server** game test server, which also confirms the mo
 | `separating_recipe_handles_plain_wool` | The custom recipe type matches `#minecraft:wool` → 3 String. Dirt is not separable. |
 | `config_multipliers_affect_values` | Speed ×2 → 50 ticks and energy ×0.5 → 10,000 FE. Restored afterwards. |
 | `creative_generator_powers_separator` | Generator placed behind a separator pushes FE in, and the separator processes Iron Wool on that power alone. Any face allows unlimited extraction (5,000,000 FE pulled in one call). |
+| `generator_creates_valid_definitions` | `/resourcefulsheep generate` logic: discovers slime, wheat and bone meal; skips already-defined iron, diamond and netherite and the raw ore blocks; slime block → 9 slime balls. Every generated JSON parses through the real codec, and writing produces one file per resource plus `pack.mcmeta`. |
 | `custom_definition_with_tag_parses` | A definition using a `#c:storage_blocks/iron` tag, a display name, hex and `[r,g,b]` colours and a custom separator block parses and behaves correctly. Missing items are reported as errors. |
 
 ## Real client run ✅ (`./gradlew runClient -PscreenshotHarness`)
@@ -45,6 +46,14 @@ The harness creates a world, stages the scene and saves screenshots to `run/scre
 - The separator GUI works: energy bar and text, progress arrow, status line, redstone button, slots, and outputs including a bonus roll.
 - JEI shows both categories (12 infusion and 13 separation recipes) with catalysts, energy and time.
 - Client definitions are synced from the integrated server (12 received).
+
+### Generator, end to end in the real client
+The harness ran `/resourcefulsheep generate` in a live world:
+- The command wrote 5 definitions and reloaded automatically.
+- The server went from 12 to 17 loaded definitions, and all 17 synced to the client.
+- JEI showed 17 infusion recipes, including the generated Bone Meal resource with auto-tinted wool.
+
+This run also caught and fixed a bug: tag-based definitions crashed a live `/reload`, because the empty-tag check ran before Minecraft had bound the new tags.
 
 ## Not tested / known limitations
 - **Real multiplayer** with two separate machines was not run. Instead:

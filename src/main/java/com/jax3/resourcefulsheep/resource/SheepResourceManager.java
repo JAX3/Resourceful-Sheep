@@ -75,11 +75,7 @@ public final class SheepResourceManager extends SimplePreparableReloadListener<M
                 continue;
             }
             SheepResource resource = SheepResource.withId(id, definition.get());
-            if (resource.feedingItem().isEmpty()) {
-                ResourcefulSheep.LOGGER.warn("Skipping sheep resource '{}': its feeding_item matches no items (empty tag?)", id);
-                skipped++;
-                continue;
-            }
+            // Tag contents are not bound yet during a reload, so empty tags are reported later (onTagsUpdated).
             loaded.put(id, resource);
         }
         SheepResourceRegistry.setServer(new SheepResourceRegistry(loaded));
@@ -104,6 +100,16 @@ public final class SheepResourceManager extends SimplePreparableReloadListener<M
             var payload = new SyncSheepResourcesPayload(java.util.List.copyOf(SheepResourceRegistry.server().all()));
             event.getRelevantPlayers().forEach(player -> PacketDistributor.sendToPlayer(player, payload));
             event.sendRecipes(com.jax3.resourcefulsheep.registry.ModRecipes.SEPARATING_TYPE.get());
+        }
+
+        /** Runs once the reload has bound tags: warn about definitions whose feeding tag is empty. */
+        @SubscribeEvent
+        public static void onTagsUpdated(net.neoforged.neoforge.event.TagsUpdatedEvent.ServerDataLoad event) {
+            for (SheepResource resource : SheepResourceRegistry.server().all()) {
+                if (resource.feedingItem().isEmpty()) {
+                    ResourcefulSheep.LOGGER.warn("Sheep resource '{}' has a feeding_item that matches no items (empty tag?); it can never be fed", resource.id());
+                }
+            }
         }
 
         @SubscribeEvent

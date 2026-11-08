@@ -89,6 +89,7 @@ public final class ModGameTests {
         TESTS.put("config_multipliers_affect_values", ModGameTests::configMultipliers);
         TESTS.put("custom_definition_with_tag_parses", ModGameTests::customDefinitionParses);
         TESTS.put("creative_generator_powers_separator", ModGameTests::creativeGeneratorPowers);
+        TESTS.put("generator_creates_valid_definitions", ModGameTests::generatorCreatesDefinitions);
         TESTS.forEach((name, fn) -> FUNCTIONS.register(name, () -> fn));
     }
 
@@ -454,5 +455,38 @@ public final class ModGameTests {
             h.assertTrue(be.getEnergy().getEnergy() > 0, "generator should push FE into the separator");
             h.assertTrue(be.getInventory().getStack(SeparatorInventory.PRIMARY).is(Items.RAW_IRON), "separator runs on generator power");
         });
+    }
+
+    private static void generatorCreatesDefinitions(GameTestHelper h) {
+        var registries = h.getLevel().registryAccess();
+        var plan = com.jax3.resourcefulsheep.command.ResourceGenerator.plan(registries, SheepResourceRegistry.server(), false);
+        java.util.Set<String> names = new java.util.HashSet<>();
+        plan.forEach(g -> names.add(g.name()));
+        h.assertTrue(names.contains("slime") && names.contains("wheat") && names.contains("bone_meal"), "vanilla storage-block materials discovered: " + names);
+        h.assertFalse(names.contains("iron") || names.contains("diamond") || names.contains("netherite"), "already-defined materials skipped: " + names);
+        h.assertFalse(names.stream().anyMatch(n -> n.startsWith("raw_")), "raw ore blocks skipped: " + names);
+        var slime = plan.stream().filter(g -> g.name().equals("slime")).findFirst().orElseThrow();
+        h.assertTrue(slime.output() == Items.SLIME_BALL && slime.uses() == 9, "slime block -> 9 slime balls, got " + slime.output() + " x" + slime.uses());
+
+        // Every generated file must load through the real definition codec, and actually accept its block.
+        var ops = registries.createSerializationContext(JsonOps.INSTANCE);
+        for (var g : plan) {
+            var parsed = SheepResource.DEFINITION_CODEC.parse(ops, g.json());
+            h.assertTrue(parsed.error().isEmpty(), g.name() + " does not parse: " + parsed.error().map(Object::toString).orElse(""));
+            SheepResource r = SheepResource.withId(ResourcefulSheep.id(g.name()), parsed.getOrThrow());
+            h.assertTrue(r.feedingItem().items().findAny().isPresent(), g.name() + " feeds nothing");
+        }
+        // Writing produces one file per definition plus pack.mcmeta.
+        try {
+            java.nio.file.Path tmp = java.nio.file.Files.createTempDirectory("rs-gen");
+            java.nio.file.Path pack = com.jax3.resourcefulsheep.command.ResourceGenerator.write(tmp, plan);
+            h.assertTrue(java.nio.file.Files.exists(pack.resolve("pack.mcmeta")), "pack.mcmeta written");
+            try (var files = java.nio.file.Files.list(pack.resolve("data/resourcefulsheep_generated/resourcefulsheep/sheep_resources"))) {
+                h.assertTrue(files.count() == plan.size(), "one JSON per resource");
+            }
+        } catch (java.io.IOException e) {
+            h.fail("write failed: " + e);
+        }
+        h.succeed();
     }
 }
