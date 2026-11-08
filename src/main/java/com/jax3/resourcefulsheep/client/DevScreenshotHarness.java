@@ -118,7 +118,12 @@ public final class DevScreenshotHarness {
                         String.format(java.util.Locale.ROOT, "tp @a %d %d %d 200 22", origin.getX() - 1, origin.getY() + 1, origin.getZ() - 2)));
             }
             case 500 -> { setHudHidden(mc, true); shot(mc, "07_sheep_closeup"); }
-            case 520 -> {
+            case 505 -> {
+                setHudHidden(mc, false);
+                mc.gui.setScreen(net.neoforged.neoforge.client.gui.modlist.ModListScreen.create(null));
+            }
+            case 535 -> shot(mc, "08_mod_list");
+            case 545 -> {
                 ResourcefulSheep.LOGGER.warn("Screenshot harness finished; client definitions loaded: {}", SheepResourceRegistry.client().size());
                 mc.stop();
             }

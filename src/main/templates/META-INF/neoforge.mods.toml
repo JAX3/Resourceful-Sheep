@@ -9,6 +9,10 @@ version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/JAX3/resourceful-sheep"
 authors="JAX3"
+# Square icon in the mod list and wide banner in the mod info panel (pixel art, so no blur).
+iconFile="icon.png"
+iconBlur=false
+bannerFile="banner.png"
 description='''
 Feed sheep blocks, ingots and gems to infuse their wool, shear them for resource wool, and process it in the FE-powered Mechanical Separator. Fully data-driven with JEI support.
 '''

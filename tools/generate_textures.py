@@ -772,6 +772,141 @@ def generate_jei():
     img.save(out("gui/jei.png"))
 
 
+# ---------------------------------------------------------------------------
+# Mod list icon (square) and info-panel banner, same cartoon palette as the
+# blocks. Drawn at low resolution and scaled with nearest-neighbour so they stay
+# crisp pixel art (mods.toml sets iconBlur = false).
+# ---------------------------------------------------------------------------
+def _sheep_head(size=32):
+    """Front-facing infused sheep: gold fleece, cream face, outlined."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    gold, gold_hi, gold_sh = hexc("#F2C230"), hexc("#FFE58A"), hexc("#B8891A")
+    face, face_sh = hexc("#E7D2B5"), hexc("#C9B090")
+    shape = {}
+
+    def disc(cx, cy, r, color):
+        for y in range(size):
+            for x in range(size):
+                if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                    shape[(x, y)] = color
+
+    for (cx, cy, r) in [(10, 12, 5), (16, 9, 6), (22, 12, 5), (8, 18, 5), (24, 18, 5), (16, 21, 7), (11, 23, 4), (21, 23, 4)]:
+        disc(cx, cy, r, gold)
+    # ears
+    for (cx, cy) in [(6, 15), (26, 15)]:
+        for y in range(cy - 1, cy + 2):
+            for x in range(cx - 2, cx + 3):
+                shape[(x, y)] = face_sh
+    # face (rounded rectangle)
+    for y in range(13, 26):
+        for x in range(12, 21):
+            if (y in (13, 25)) and x in (12, 20):
+                continue
+            shape[(x, y)] = face
+    for (x, y), c in shape.items():
+        img.putpixel((x, y), c)
+    # fleece shading: highlight up-left edges, shadow down-right edges
+    for (x, y), c in shape.items():
+        if c != gold:
+            continue
+        if (x - 1, y - 1) not in shape:
+            img.putpixel((x, y), gold_hi)
+        elif (x + 1, y + 1) not in shape:
+            img.putpixel((x, y), gold_sh)
+    # curls on the fleece
+    for (x, y) in [(9, 10), (15, 6), (22, 9), (7, 18), (25, 20), (14, 27), (19, 27)]:
+        if (x, y) in shape and shape[(x, y)] == gold:
+            img.putpixel((x, y), gold_sh)
+            if (x + 1, y) in shape and shape[(x + 1, y)] == gold:
+                img.putpixel((x + 1, y), gold_hi)
+    # face shading, eyes, nose
+    for y in range(14, 25):
+        img.putpixel((20, y), face_sh)
+    for (ex, ey) in [(13, 17), (18, 17)]:
+        img.putpixel((ex, ey), hexc("#1a1220"))
+        img.putpixel((ex + 1, ey), hexc("#1a1220"))
+        img.putpixel((ex, ey + 1), hexc("#1a1220"))
+        img.putpixel((ex + 1, ey + 1), hexc("#1a1220"))
+        img.putpixel((ex, ey), hexc("#ffffff"))
+    for (x, y) in [(15, 21), (16, 21), (15, 22), (16, 22)]:
+        img.putpixel((x, y), hexc("#d98a8a"))
+    img.putpixel((15, 23), hexc("#8a4a4a"))
+    img.putpixel((16, 23), hexc("#8a4a4a"))
+    # outline around the whole silhouette
+    outline = []
+    for y in range(size):
+        for x in range(size):
+            if (x, y) in shape:
+                continue
+            if any((x + dx, y + dy) in shape for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]):
+                outline.append((x, y))
+    for p in outline:
+        if 0 <= p[0] < size and 0 <= p[1] < size:
+            img.putpixel(p, CARTOON["O"])
+    return img
+
+
+def _star(img, x, y, c, glow):
+    img.putpixel((x, y), c)
+    for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        img.putpixel((x + dx, y + dy), glow)
+
+
+def _plate(w, h):
+    """Outlined slate plate with highlight/shadow rims and corner bolts, like the block faces."""
+    img = Image.new("RGBA", (w, h), CARTOON["M"])
+    for x in range(w):
+        img.putpixel((x, 0), CARTOON["O"]); img.putpixel((x, h - 1), CARTOON["O"])
+        img.putpixel((x, 1), CARTOON["H"]); img.putpixel((x, h - 2), CARTOON["S"])
+    for y in range(h):
+        img.putpixel((0, y), CARTOON["O"]); img.putpixel((w - 1, y), CARTOON["O"])
+        img.putpixel((1, y), CARTOON["H"]); img.putpixel((w - 2, y), CARTOON["S"])
+    for (x, y) in [(3, 3), (w - 5, 3), (3, h - 5), (w - 5, h - 5)]:
+        img.putpixel((x, y), CARTOON["B"]); img.putpixel((x + 1, y), CARTOON["b"])
+        img.putpixel((x, y + 1), CARTOON["b"]); img.putpixel((x + 1, y + 1), CARTOON["S"])
+    for (x, y) in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)]:
+        img.putpixel((x, y), CLEAR)
+    return img
+
+
+def _glow(img, cx, cy, r):
+    for y in range(img.height):
+        for x in range(img.width):
+            d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+            if d <= r:
+                img.putpixel((x, y), mix(CARTOON["P"], CARTOON["M"], min(1.0, d / r) ** 1.5))
+
+
+def generate_logo():
+    # Square icon: 36x36 art, scaled x4 -> 144x144
+    icon = _plate(36, 36)
+    _glow(icon, 18, 18, 15)
+    icon.alpha_composite(_sheep_head(32), (2, 2))
+    _star(icon, 5, 6, hexc("#ffffff"), hexc("#ffe58a"))
+    _star(icon, 30, 29, hexc("#ffffff"), hexc("#ff9af0"))
+    icon.resize((144, 144), Image.NEAREST).save(os.path.join(ROOT, "..", "..", "..", "icon.png"))
+
+    # Banner: 120x40 art, scaled x4 -> 480x160. Sheep, an arrow of wool, and the separator.
+    banner = _plate(120, 40)
+    _glow(banner, 22, 20, 17)
+    banner.alpha_composite(_sheep_head(32), (6, 4))
+    tex = os.path.join(ROOT)
+    woolx = 44
+    for i, name in enumerate(["iron", "gold", "diamond"]):
+        w = Image.open(os.path.join(tex, "item", f"{name}_wool.png")).convert("RGBA")
+        banner.alpha_composite(w, (woolx + i * 13, 12 + (4 if i == 1 else 0)))
+    # little arrow toward the machine
+    for x in range(85, 91):
+        banner.putpixel((x, 20), CARTOON["G"])
+    for i in range(3):
+        banner.putpixel((90 - i, 20 - i - 1), CARTOON["G"]); banner.putpixel((90 - i, 20 + i + 1), CARTOON["G"])
+    front = Image.open(os.path.join(tex, "block", "mechanical_separator_front_active.png")).convert("RGBA").crop((0, 0, 16, 16))
+    banner.alpha_composite(front.resize((24, 24), Image.NEAREST), (93, 8))
+    for (x, y) in [(40, 7), (78, 31), (112, 6)]:
+        _star(banner, x, y, hexc("#ffffff"), hexc("#ff9af0"))
+    banner.resize((480, 160), Image.NEAREST).save(os.path.join(ROOT, "..", "..", "..", "banner.png"))
+
+
 def main():
     generate_wool_items()
     generate_sheep_fur()
@@ -779,6 +914,7 @@ def main():
     generate_creative_generator()
     generate_gui()
     generate_jei()
+    generate_logo()
     print("Textures written to", os.path.abspath(ROOT))
 
 
