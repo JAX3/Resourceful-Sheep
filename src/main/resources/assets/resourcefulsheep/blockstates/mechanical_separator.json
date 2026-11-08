@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "resourcefulsheep:block/mechanical_separator"
+    },
+    "active=true,facing=north": {
+      "model": "resourcefulsheep:block/mechanical_separator_active"
+    },
+    "active=false,facing=east": {
+      "model": "resourcefulsheep:block/mechanical_separator",
+      "y": 90
+    },
+    "active=true,facing=east": {
+      "model": "resourcefulsheep:block/mechanical_separator_active",
+      "y": 90
+    },
+    "active=false,facing=south": {
+      "model": "resourcefulsheep:block/mechanical_separator",
+      "y": 180
+    },
+    "active=true,facing=south": {
+      "model": "resourcefulsheep:block/mechanical_separator_active",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "resourcefulsheep:block/mechanical_separator",
+      "y": 270
+    },
+    "active=true,facing=west": {
+      "model": "resourcefulsheep:block/mechanical_separator_active",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:cobblestone",
+  "feeding_amount": 1,
+  "wool_color": "#8E8E8E",
+  "accent_color": "#B5B5B5",
+  "category": "material",
+  "wool_drop_count": 1,
+  "infusion_uses": 1,
+  "separator": {
+    "primary_output": "minecraft:cobblestone",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 4000,
+    "processing_ticks": 40
+  }
+}

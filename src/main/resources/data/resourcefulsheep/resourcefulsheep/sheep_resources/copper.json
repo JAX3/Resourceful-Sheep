@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:copper_block",
+  "feeding_amount": 1,
+  "wool_color": "#D27A4E",
+  "accent_color": "#5FD3B5",
+  "category": "ore",
+  "wool_drop_count": 1,
+  "infusion_uses": 9,
+  "separator": {
+    "primary_output": "minecraft:raw_copper",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 16000,
+    "processing_ticks": 100
+  }
+}

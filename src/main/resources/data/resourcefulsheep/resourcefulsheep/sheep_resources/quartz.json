@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:quartz",
+  "feeding_amount": 1,
+  "wool_color": "#EDE6DC",
+  "accent_color": "#FFFFFF",
+  "category": "gem",
+  "wool_drop_count": 1,
+  "infusion_uses": 1,
+  "separator": {
+    "primary_output": "minecraft:quartz",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 16000,
+    "processing_ticks": 100
+  }
+}

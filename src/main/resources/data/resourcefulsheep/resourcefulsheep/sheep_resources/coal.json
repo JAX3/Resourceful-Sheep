@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:coal_block",
+  "feeding_amount": 1,
+  "wool_color": "#3A3A3E",
+  "accent_color": "#8C8C96",
+  "category": "material",
+  "wool_drop_count": 1,
+  "infusion_uses": 9,
+  "separator": {
+    "primary_output": "minecraft:coal",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 8000,
+    "processing_ticks": 80
+  }
+}

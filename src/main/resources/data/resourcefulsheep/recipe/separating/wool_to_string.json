@@ -1,0 +1,10 @@
+{
+  "type": "resourcefulsheep:separating",
+  "ingredient": "#minecraft:wool",
+  "primary_output": {
+    "id": "minecraft:string",
+    "count": 3
+  },
+  "energy_cost": 2000,
+  "processing_ticks": 40
+}

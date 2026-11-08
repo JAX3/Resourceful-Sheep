@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:storage_blocks/osmium"
+      }
+    }
+  ],
+  "feeding_item": "#c:storage_blocks/osmium",
+  "feeding_amount": 1,
+  "display_name": "Osmium",
+  "wool_color": "#9FB7C9",
+  "accent_color": "#DDEBF5",
+  "category": "ore",
+  "wool_drop_count": 1,
+  "infusion_uses": 9,
+  "separator": {
+    "primary_output": "mekanism:raw_osmium",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 20000,
+    "processing_ticks": 100
+  }
+}

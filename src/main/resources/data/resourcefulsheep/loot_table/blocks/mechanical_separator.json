@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "resourcefulsheep:mechanical_separator",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "source": "block_entity",
+            "include": [
+              "minecraft:custom_name",
+              "resourcefulsheep:machine_contents"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "random_sequence": "resourcefulsheep:blocks/mechanical_separator"
+}

@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:redstone_block",
+  "feeding_amount": 1,
+  "wool_color": "#9E1D1D",
+  "accent_color": "#FF3B2B",
+  "category": "dust",
+  "wool_drop_count": 1,
+  "infusion_uses": 9,
+  "separator": {
+    "primary_output": "minecraft:redstone",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 12000,
+    "processing_ticks": 80
+  }
+}

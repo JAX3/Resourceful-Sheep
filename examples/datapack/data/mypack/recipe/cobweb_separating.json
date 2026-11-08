@@ -1,0 +1,14 @@
+{
+  "type": "resourcefulsheep:separating",
+  "ingredient": "minecraft:cobweb",
+  "primary_output": {
+    "id": "minecraft:string",
+    "count": 5
+  },
+  "bonus_output": {
+    "item": "minecraft:spider_eye",
+    "chance": 0.05
+  },
+  "energy_cost": 3000,
+  "processing_ticks": 40
+}

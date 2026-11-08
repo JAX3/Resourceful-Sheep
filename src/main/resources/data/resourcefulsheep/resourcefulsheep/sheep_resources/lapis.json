@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:lapis_block",
+  "feeding_amount": 1,
+  "wool_color": "#2F55B5",
+  "accent_color": "#9DB8FF",
+  "category": "gem",
+  "wool_drop_count": 1,
+  "infusion_uses": 9,
+  "separator": {
+    "primary_output": "minecraft:lapis_lazuli",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 12000,
+    "processing_ticks": 80
+  }
+}

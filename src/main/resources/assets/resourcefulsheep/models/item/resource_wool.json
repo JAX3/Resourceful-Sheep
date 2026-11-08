@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "resourcefulsheep:item/resource_wool_base",
+    "layer1": "resourcefulsheep:item/resource_wool_overlay"
+  }
+}

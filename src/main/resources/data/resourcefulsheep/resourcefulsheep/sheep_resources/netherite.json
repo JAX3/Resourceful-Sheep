@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:netherite_scrap",
+  "feeding_amount": 1,
+  "wool_color": "#4A3E44",
+  "accent_color": "#9B6FB0",
+  "category": "material",
+  "wool_drop_count": 1,
+  "infusion_uses": 1,
+  "separator": {
+    "primary_output": "minecraft:netherite_scrap",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 80000,
+    "processing_ticks": 200
+  }
+}

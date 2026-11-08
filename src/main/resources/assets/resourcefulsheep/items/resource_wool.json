@@ -1,0 +1,107 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "resourcefulsheep:sheep_resource",
+    "cases": [
+      {
+        "when": "resourcefulsheep:iron",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/iron_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:gold",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/gold_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:copper",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/copper_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:diamond",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/diamond_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:emerald",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/emerald_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:redstone",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/redstone_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:lapis",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/lapis_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:coal",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/coal_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:netherite",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/netherite_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:stone",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/stone_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:wood",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/wood_wool"
+        }
+      },
+      {
+        "when": "resourcefulsheep:quartz",
+        "model": {
+          "type": "minecraft:model",
+          "model": "resourcefulsheep:item/quartz_wool"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "resourcefulsheep:item/resource_wool",
+      "tints": [
+        {
+          "type": "resourcefulsheep:resource_wool",
+          "channel": "wool"
+        },
+        {
+          "type": "resourcefulsheep:resource_wool",
+          "channel": "accent"
+        }
+      ]
+    }
+  }
+}

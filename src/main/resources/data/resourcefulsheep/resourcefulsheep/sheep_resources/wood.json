@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:oak_log",
+  "feeding_amount": 1,
+  "wool_color": "#A8834F",
+  "accent_color": "#6B4F2A",
+  "category": "organic",
+  "wool_drop_count": 1,
+  "infusion_uses": 1,
+  "separator": {
+    "primary_output": "minecraft:oak_log",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 4000,
+    "processing_ticks": 40
+  }
+}

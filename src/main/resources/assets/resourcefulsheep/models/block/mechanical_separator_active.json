@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "resourcefulsheep:block/mechanical_separator_side",
+    "north": "resourcefulsheep:block/mechanical_separator_front_active",
+    "south": "resourcefulsheep:block/mechanical_separator_back",
+    "east": "resourcefulsheep:block/mechanical_separator_side",
+    "west": "resourcefulsheep:block/mechanical_separator_side",
+    "up": "resourcefulsheep:block/mechanical_separator_top",
+    "down": "resourcefulsheep:block/mechanical_separator_bottom"
+  }
+}

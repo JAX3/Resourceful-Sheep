@@ -1,0 +1,17 @@
+{
+  "feeding_item": "minecraft:emerald",
+  "feeding_amount": 1,
+  "wool_color": "#3FC46A",
+  "accent_color": "#B9FFC9",
+  "category": "gem",
+  "wool_drop_count": 1,
+  "infusion_uses": 1,
+  "separator": {
+    "primary_output": "minecraft:emerald",
+    "primary_count": 1,
+    "secondary_output": "minecraft:string",
+    "secondary_count": 2,
+    "energy_cost": 40000,
+    "processing_ticks": 160
+  }
+}
