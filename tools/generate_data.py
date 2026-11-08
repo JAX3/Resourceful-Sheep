@@ -32,9 +32,9 @@ RESOURCES = {
                  bonus={"item": {"id": "minecraft:gold_nugget", "count": 3}, "chance": 0.1}),
     "copper": dict(display="Copper", feed="minecraft:copper_block", out="minecraft:raw_copper", cat="ore", uses=9,
                    wool="#D27A4E", accent="#5FD3B5", energy=16000, ticks=100),
-    "diamond": dict(display="Diamond", feed="minecraft:diamond", out="minecraft:diamond", cat="gem", uses=1,
+    "diamond": dict(display="Diamond", growth="minecraft:diamond_block", feed="minecraft:diamond", out="minecraft:diamond", cat="gem", uses=1,
                     wool="#7FE6E0", accent="#E8FFFF", energy=40000, ticks=160),
-    "emerald": dict(display="Emerald", feed="minecraft:emerald", out="minecraft:emerald", cat="gem", uses=1,
+    "emerald": dict(display="Emerald", growth="minecraft:emerald_block", feed="minecraft:emerald", out="minecraft:emerald", cat="gem", uses=1,
                     wool="#3FC46A", accent="#B9FFC9", energy=40000, ticks=160),
     "redstone": dict(display="Redstone", feed="minecraft:redstone_block", out="minecraft:redstone", cat="dust", uses=9,
                      wool="#9E1D1D", accent="#FF3B2B", energy=12000, ticks=80),
@@ -42,13 +42,13 @@ RESOURCES = {
                   wool="#2F55B5", accent="#9DB8FF", energy=12000, ticks=80),
     "coal": dict(display="Coal", feed="minecraft:coal_block", out="minecraft:coal", cat="material", uses=9,
                  wool="#3A3A3E", accent="#8C8C96", energy=8000, ticks=80),
-    "netherite": dict(display="Netherite", feed="minecraft:netherite_scrap", out="minecraft:netherite_scrap", cat="material", uses=1,
+    "netherite": dict(display="Netherite", growth="minecraft:ancient_debris", feed="minecraft:netherite_scrap", out="minecraft:netherite_scrap", cat="material", uses=1,
                       wool="#4A3E44", accent="#9B6FB0", energy=80000, ticks=200),
     "stone": dict(display="Stone", feed="minecraft:cobblestone", out="minecraft:cobblestone", cat="material", uses=1,
                   wool="#8E8E8E", accent="#B5B5B5", energy=4000, ticks=40),
     "wood": dict(display="Wood", feed="minecraft:oak_log", out="minecraft:oak_log", cat="organic", uses=1,
                  wool="#A8834F", accent="#6B4F2A", energy=4000, ticks=40),
-    "quartz": dict(display="Quartz", feed="minecraft:quartz", out="minecraft:quartz", cat="gem", uses=1,
+    "quartz": dict(display="Quartz", growth="minecraft:quartz_block", feed="minecraft:quartz", out="minecraft:quartz", cat="gem", uses=1,
                    wool="#EDE6DC", accent="#FFFFFF", energy=16000, ticks=100),
 }
 
@@ -65,6 +65,7 @@ def resource_definitions():
         }
         if "bonus" in r:
             sep["bonus_output"] = r["bonus"]
+        extra = {"growth_item": r["growth"]} if "growth" in r else {}
         write(os.path.join(DATA, MOD, MOD, "sheep_resources", f"{name}.json"), {
             "feeding_item": r["feed"],
             "feeding_amount": 1,
@@ -74,6 +75,7 @@ def resource_definitions():
             "wool_drop_count": 1,
             "infusion_uses": r["uses"],
             "separator": sep,
+            **extra,
         })
 
 

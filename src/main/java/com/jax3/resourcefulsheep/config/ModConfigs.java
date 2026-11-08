@@ -199,6 +199,7 @@ public final class ModConfigs {
         public final ModConfigSpec.BooleanValue ambientParticles;
         public final ModConfigSpec.DoubleValue dyeTintStrength;
         public final ModConfigSpec.BooleanValue showSheepSparkleOverlay;
+        public final ModConfigSpec.BooleanValue showResourceGrowths;
         public final ModConfigSpec.BooleanValue detailedWoolTooltips;
         public final ModConfigSpec.BooleanValue detailedMachineTooltips;
 
@@ -210,6 +211,8 @@ public final class ModConfigs {
                     .defineInRange("dyeTintStrength", 0.3, 0.0, 1.0);
             showSheepSparkleOverlay = b.comment("Render the glinting accent overlay on infused sheep wool.")
                     .define("showSheepSparkleOverlay", true);
+            showResourceGrowths = b.comment("Render small blocks of the infused resource growing out of the sheep's fleece (fewer as the infusion is used up).")
+                    .define("showResourceGrowths", true);
             detailedWoolTooltips = b.comment("Show separation output, energy and time in resource wool tooltips (otherwise only while holding Shift).")
                     .define("detailedWoolTooltips", false);
             detailedMachineTooltips = b.comment("Show extended status tooltips (energy per tick, recipe time) in the Mechanical Separator GUI.")

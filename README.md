@@ -27,7 +27,8 @@ The mod is data-driven: resource definitions are reloadable JSON, gameplay numbe
 Right-click an **adult** sheep while holding a resource, for example an **Iron Block**.
 
 - One item is consumed (this is configurable). You'll see coloured particles and hear a chime.
-- The sheep's fleece takes on the resource colour with glinting strands. Its dye colour still shows through slightly, so a blue diamond sheep looks different from a white one.
+- The sheep's fleece takes on the resource colour with glinting strands, and **small blocks of the resource grow out of its back** (iron blocks on an iron sheep, diamond blocks on a diamond sheep, logs on a wood sheep). The clusters shrink as the infusion is used up by shearing.
+- Its dye colour still shows through slightly, so a blue diamond sheep looks different from a white one.
 - Each infusion lasts a set number of shearings. Iron, gold, copper, redstone, lapis and coal blocks last **9** shearings (one block holds 9 items). Single items such as diamond, emerald, netherite scrap, cobblestone, oak log and quartz last **1**.
 - Feeding an item that isn't a resource does nothing special, so wheat breeding, dyes and so on work as normal.
 - Sneak + right-click a sheep with an empty hand to see its infusion and how many shearings it has left.
@@ -187,6 +188,7 @@ Other useful tasks:
 |---|---|
 | `ambientParticles` | Particles around infused sheep |
 | `dyeTintStrength` | How strongly the dye colour shows through infused wool |
+| `showResourceGrowths` | Resource blocks growing out of infused fleece |
 | `showSheepSparkleOverlay` | The glinting overlay on infused fleece |
 | `detailedWoolTooltips` | Always show separator details in wool tooltips |
 | `detailedMachineTooltips` | Extra detail in the separator GUI tooltips |
@@ -222,7 +224,8 @@ Definitions live in `data/<namespace>/resourcefulsheep/sheep_resources/<name>.js
     "bonus_output": { "item": "mekanism:nugget_tin", "chance": 0.1 },
     "energy_cost": 20000,                    // total FE; default: config
     "processing_ticks": 100                  // default: config
-  }
+  },
+  "growth_item": "mekanism:block_tin"        // optional: block shown growing out of the fleece; default: the fed item
 }
 ```
 

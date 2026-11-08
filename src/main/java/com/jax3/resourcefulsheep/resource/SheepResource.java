@@ -40,6 +40,7 @@ import net.minecraft.world.item.crafting.Ingredient;
  * @param woolDropCount infused wool dropped per shearing
  * @param infusionUses  number of shearings one feeding lasts (before the global multiplier)
  * @param separator     how the Mechanical Separator processes this resource's wool
+ * @param growthItem    optional item/block shown growing out of the fleece; defaults to the first feeding item
  */
 public record SheepResource(
         Identifier id,
@@ -52,7 +53,8 @@ public record SheepResource(
         Category category,
         int woolDropCount,
         int infusionUses,
-        Separator separator) {
+        Separator separator,
+        Optional<ItemStackTemplate> growthItem) {
 
     /** Accepts {@code "#RRGGBB"}, {@code "RRGGBB"}, an integer, or an {@code [r, g, b]} array. */
     public static final Codec<Integer> COLOR_CODEC = Codec.withAlternative(
@@ -73,7 +75,8 @@ public record SheepResource(
             Category.CODEC.optionalFieldOf("category", Category.MATERIAL).forGetter(Definition::category),
             ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("wool_drop_count", 1).forGetter(Definition::woolDropCount),
             ExtraCodecs.POSITIVE_INT.optionalFieldOf("infusion_uses", 1).forGetter(Definition::infusionUses),
-            Separator.CODEC.optionalFieldOf("separator", Separator.DEFAULT).forGetter(Definition::separator)
+            Separator.CODEC.optionalFieldOf("separator", Separator.DEFAULT).forGetter(Definition::separator),
+            ItemStackTemplate.CODEC.optionalFieldOf("growth_item").forGetter(Definition::growthItem)
     ).apply(i, Definition::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SheepResource> STREAM_CODEC = StreamCodec.composite(
@@ -83,12 +86,12 @@ public record SheepResource(
 
     public static SheepResource withId(Identifier id, Definition d) {
         return new SheepResource(id, d.feedingItem, d.feedingAmount, d.displayName, d.woolName, d.woolColor,
-                d.accentColor, d.category, d.woolDropCount, d.infusionUses, d.separator);
+                d.accentColor, d.category, d.woolDropCount, d.infusionUses, d.separator, d.growthItem);
     }
 
     public Definition definition() {
         return new Definition(feedingItem, feedingAmount, displayName, woolName, woolColor, accentColor, category,
-                woolDropCount, infusionUses, separator);
+                woolDropCount, infusionUses, separator, growthItem);
     }
 
     // ------------------------------------------------------------------ derived values (with config applied)
@@ -127,6 +130,12 @@ public record SheepResource(
     }
 
     /** Example item to show for the feeding input (first matching item). */
+    /** What grows out of an infused sheep's fleece: {@code growth_item}, or else the first feeding item. */
+    public ItemStack growthStack() {
+        return growthItem.map(ItemStackTemplate::create)
+                .orElseGet(() -> feedingItem.items().findFirst().map(h -> new ItemStack(h)).orElse(ItemStack.EMPTY));
+    }
+
     public ItemStack exampleFeedingStack() {
         return feedingItem.items().findFirst().map(h -> new ItemStack(h, effectiveFeedingAmount())).orElse(ItemStack.EMPTY);
     }
@@ -161,7 +170,8 @@ public record SheepResource(
 
     public record Definition(
             Ingredient feedingItem, int feedingAmount, Optional<Component> displayName, Optional<Component> woolName,
-            int woolColor, int accentColor, Category category, int woolDropCount, int infusionUses, Separator separator) {}
+            int woolColor, int accentColor, Category category, int woolDropCount, int infusionUses, Separator separator,
+            Optional<ItemStackTemplate> growthItem) {}
 
     /** What kind of material a resource is. Ores should normally separate into their raw material. */
     public enum Category implements StringRepresentable {

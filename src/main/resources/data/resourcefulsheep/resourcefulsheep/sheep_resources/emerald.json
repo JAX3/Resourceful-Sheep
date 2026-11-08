@@ -13,5 +13,6 @@
     "secondary_count": 2,
     "energy_cost": 40000,
     "processing_ticks": 160
-  }
+  },
+  "growth_item": "minecraft:emerald_block"
 }

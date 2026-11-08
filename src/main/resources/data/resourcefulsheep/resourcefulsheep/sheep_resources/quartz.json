@@ -13,5 +13,6 @@
     "secondary_count": 2,
     "energy_cost": 16000,
     "processing_ticks": 100
-  }
+  },
+  "growth_item": "minecraft:quartz_block"
 }
