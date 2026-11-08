@@ -23,6 +23,9 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
  *     <li>{@code generate} - creates a sheep resource for every material found in {@code c:storage_blocks/*} tags
  *     that is not already defined, writes them to the world data pack {@code resourcefulsheep_generated} and reloads.</li>
  *     <li>{@code generate all} - same, but also regenerates materials that already have a definition.</li>
+ *     <li>{@code generate dedupe} - deletes generated resources that duplicate another wool type (same feeding
+ *     item or same name, e.g. a generated Iron next to the built-in Iron) and reloads. Built-in and hand-written
+ *     definitions are never removed.</li>
  *     <li>{@code preview} - lists what {@code generate} would create, without writing anything.</li>
  *     <li>{@code list} - lists every loaded resource.</li>
  * </ul>
@@ -40,7 +43,8 @@ public final class ResourcefulSheepCommand {
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("generate")
                         .executes(ctx -> generate(ctx, false))
-                        .then(Commands.literal("all").executes(ctx -> generate(ctx, true))))
+                        .then(Commands.literal("all").executes(ctx -> generate(ctx, true)))
+                        .then(Commands.literal("dedupe").executes(ResourcefulSheepCommand::dedupe)))
                 .then(Commands.literal("preview").executes(ResourcefulSheepCommand::preview))
                 .then(Commands.literal("list").executes(ResourcefulSheepCommand::list)));
     }
@@ -79,6 +83,34 @@ public final class ResourcefulSheepCommand {
                 .withStyle(ChatFormatting.GREEN), true);
         reloadWithNewPacks(source);
         return plan.size();
+    }
+
+    private static int dedupe(CommandContext<CommandSourceStack> ctx) {
+        CommandSourceStack source = ctx.getSource();
+        MinecraftServer server = source.getServer();
+        List<ResourceGenerator.Duplicate> duplicates = ResourceGenerator.findDuplicates(SheepResourceRegistry.server());
+        if (duplicates.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("command.resourcefulsheep.dedupe.none").withStyle(ChatFormatting.GREEN), false);
+            return 0;
+        }
+        int removed;
+        try {
+            removed = ResourceGenerator.delete(server.getWorldPath(LevelResource.DATAPACK_DIR),
+                    duplicates.stream().map(ResourceGenerator.Duplicate::resource).toList());
+        } catch (Exception e) {
+            ResourcefulSheep.LOGGER.error("Failed to delete duplicate sheep resources", e);
+            source.sendFailure(Component.translatable("command.resourcefulsheep.generate.failed", e.getMessage()));
+            return 0;
+        }
+        for (ResourceGenerator.Duplicate d : duplicates) {
+            source.sendSuccess(() -> Component.literal(" - ").withStyle(ChatFormatting.RED)
+                    .append(Component.literal(d.resource().name().getString() + " (" + d.resource().id() + ")").withStyle(ChatFormatting.WHITE))
+                    .append(Component.literal("  duplicates " + d.keptInstead().id() + ": " + d.reason()).withStyle(ChatFormatting.GRAY)), false);
+        }
+        int count = removed;
+        source.sendSuccess(() -> Component.translatable("command.resourcefulsheep.dedupe.done", count).withStyle(ChatFormatting.GREEN), true);
+        reloadWithNewPacks(source);
+        return removed;
     }
 
     /**

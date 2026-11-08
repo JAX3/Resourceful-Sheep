@@ -243,6 +243,7 @@ You don't have to write a definition for every metal by hand. In a world with ch
 | `/resourcefulsheep preview` | Lists what would be generated, without changing anything |
 | `/resourcefulsheep generate` | Creates a resource for every material that doesn't have one yet, saves them into the world data pack `resourcefulsheep_generated`, and reloads |
 | `/resourcefulsheep generate all` | Same, but also regenerates materials that already have a definition |
+| `/resourcefulsheep generate dedupe` | Deletes generated wool types that duplicate another one, then reloads. A duplicate has the same feeding block or the same name as another type, for example a generated Iron next to the built-in Iron after `generate all`. Built-in and hand-written definitions are never removed. Of two generated duplicates, the first by id is kept. |
 | `/resourcefulsheep list` | Lists every loaded resource |
 
 How the generator chooses each value:

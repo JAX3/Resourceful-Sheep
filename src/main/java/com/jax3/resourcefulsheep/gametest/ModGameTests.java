@@ -90,6 +90,7 @@ public final class ModGameTests {
         TESTS.put("custom_definition_with_tag_parses", ModGameTests::customDefinitionParses);
         TESTS.put("creative_generator_powers_separator", ModGameTests::creativeGeneratorPowers);
         TESTS.put("generator_creates_valid_definitions", ModGameTests::generatorCreatesDefinitions);
+        TESTS.put("generator_dedupe_removes_duplicate_wool", ModGameTests::generatorDedupe);
         TESTS.forEach((name, fn) -> FUNCTIONS.register(name, () -> fn));
     }
 
@@ -486,6 +487,41 @@ public final class ModGameTests {
             }
         } catch (java.io.IOException e) {
             h.fail("write failed: " + e);
+        }
+        h.succeed();
+    }
+
+    private static void generatorDedupe(GameTestHelper h) {
+        var registries = h.getLevel().registryAccess();
+        var ops = registries.createSerializationContext(JsonOps.INSTANCE);
+        // "generate all" on purpose: produces copies of built-ins (iron, gold, diamond...) alongside new materials.
+        var plan = com.jax3.resourcefulsheep.command.ResourceGenerator.plan(registries, SheepResourceRegistry.server(), true);
+        java.util.Map<Identifier, SheepResource> combined = new java.util.HashMap<>(SheepResourceRegistry.server().asMap());
+        for (var g : plan) {
+            Identifier id = Identifier.fromNamespaceAndPath(com.jax3.resourcefulsheep.command.ResourceGenerator.NAMESPACE, g.name());
+            combined.put(id, SheepResource.withId(id, SheepResource.DEFINITION_CODEC.parse(ops, g.json()).getOrThrow()));
+        }
+        var dups = com.jax3.resourcefulsheep.command.ResourceGenerator.findDuplicates(new SheepResourceRegistry(combined));
+        java.util.Set<String> dupNames = new java.util.HashSet<>();
+        dups.forEach(d -> dupNames.add(d.resource().id().getPath()));
+        for (String n : List.of("iron", "gold", "copper", "redstone", "lapis", "coal", "diamond", "emerald", "netherite")) {
+            h.assertTrue(dupNames.contains(n), "generated " + n + " should be flagged as a duplicate: " + dupNames);
+        }
+        for (String n : List.of("slime", "wheat", "bone_meal")) {
+            h.assertFalse(dupNames.contains(n), n + " is unique and must be kept: " + dupNames);
+        }
+        h.assertTrue(dups.stream().noneMatch(d -> !com.jax3.resourcefulsheep.command.ResourceGenerator.isGenerated(d.resource())),
+                "built-in definitions are never flagged");
+        try {
+            java.nio.file.Path tmp = java.nio.file.Files.createTempDirectory("rs-dedupe");
+            java.nio.file.Path pack = com.jax3.resourcefulsheep.command.ResourceGenerator.write(tmp, plan);
+            int removed = com.jax3.resourcefulsheep.command.ResourceGenerator.delete(tmp, dups.stream().map(d -> d.resource()).toList());
+            h.assertTrue(removed == dups.size(), "every duplicate file deleted: " + removed + "/" + dups.size());
+            try (var files = java.nio.file.Files.list(pack.resolve("data/resourcefulsheep_generated/resourcefulsheep/sheep_resources"))) {
+                h.assertTrue(files.count() == plan.size() - dups.size(), "unique definitions remain on disk");
+            }
+        } catch (java.io.IOException e) {
+            h.fail("file handling failed: " + e);
         }
         h.succeed();
     }

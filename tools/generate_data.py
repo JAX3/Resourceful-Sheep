@@ -229,6 +229,8 @@ def lang():
         "command.resourcefulsheep.generate.done": "Generated %s sheep resource(s) into the world data pack '%s'. Reloading...",
         "command.resourcefulsheep.generate.failed": "Could not write the generated data pack: %s",
         "command.resourcefulsheep.list.header": "%s sheep resource(s) loaded:",
+        "command.resourcefulsheep.dedupe.none": "No duplicate wool types found.",
+        "command.resourcefulsheep.dedupe.done": "Removed %s duplicate wool type(s) from the generated data pack. Reloading...",
         "resourcefulsheep.configuration.title": "Resourceful Sheep Configuration",
         "resourcefulsheep.configuration.section.resourcefulsheep.synced.toml": "Gameplay (per world)",
         "resourcefulsheep.configuration.section.resourcefulsheep.synced.toml.title": "Gameplay (per world)",

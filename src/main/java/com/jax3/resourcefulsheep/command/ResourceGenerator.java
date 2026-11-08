@@ -158,6 +158,54 @@ public final class ResourceGenerator {
         return Optional.empty();
     }
 
+    /** A generated resource that duplicates another one, and why. */
+    public record Duplicate(SheepResource resource, SheepResource keptInstead, String reason) {}
+
+    /**
+     * Finds generated resources ({@value #NAMESPACE} namespace) that duplicate another resource: their feeding items
+     * overlap, or they have the same name. Built-in and hand-written definitions always win and are never reported;
+     * between two generated ones, the first by id is kept.
+     */
+    public static List<Duplicate> findDuplicates(SheepResourceRegistry registry) {
+        List<SheepResource> kept = new ArrayList<>(registry.all().stream().filter(r -> !isGenerated(r)).toList());
+        List<Duplicate> duplicates = new ArrayList<>();
+        List<SheepResource> generated = registry.all().stream().filter(ResourceGenerator::isGenerated)
+                .sorted(Comparator.comparing(r -> r.id().toString())).toList();
+        for (SheepResource g : generated) {
+            Duplicate dup = null;
+            String name = g.name().getString().toLowerCase(Locale.ROOT);
+            for (SheepResource k : kept) {
+                if (k.id().getPath().equals(g.id().getPath()) || k.name().getString().toLowerCase(Locale.ROOT).equals(name)) {
+                    dup = new Duplicate(g, k, "same name");
+                    break;
+                }
+                boolean overlap = g.feedingItems().stream().anyMatch(h -> k.feedingItem().test(new ItemStack(h)));
+                if (overlap) {
+                    dup = new Duplicate(g, k, "same feeding item");
+                    break;
+                }
+            }
+            if (dup != null) duplicates.add(dup);
+            else kept.add(g);
+        }
+        return duplicates;
+    }
+
+    public static boolean isGenerated(SheepResource resource) {
+        return resource.id().getNamespace().equals(NAMESPACE);
+    }
+
+    /** Deletes the given generated definitions from the world's generated data pack. Returns how many files were removed. */
+    public static int delete(Path datapacksDir, List<SheepResource> resources) throws IOException {
+        Path dir = datapacksDir.resolve(PACK_NAME).resolve("data").resolve(NAMESPACE).resolve("resourcefulsheep").resolve("sheep_resources");
+        int removed = 0;
+        for (SheepResource r : resources) {
+            if (!isGenerated(r)) continue; // never touch built-in or hand-written definitions
+            if (Files.deleteIfExists(dir.resolve(r.id().getPath() + ".json"))) removed++;
+        }
+        return removed;
+    }
+
     /** Writes the definitions as a world data pack (replacing any previous generated pack). Returns the pack folder. */
     public static Path write(Path datapacksDir, List<Generated> generated) throws IOException {
         Path pack = datapacksDir.resolve(PACK_NAME);
