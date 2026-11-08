@@ -459,6 +459,42 @@ def generate_block():
         fh.write('{\n  "animation": {\n    "frametime": 3,\n    "interpolate": false\n  }\n}\n')
 
 
+CREATIVE_GEN = [  # creative energy source: magenta-rimmed plate with a big glowing energy core
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHggggggggggggSO",
+    "OgBbMMOOOOMMBbgO",
+    "OgbSMOPPPPOMbSgO",
+    "OgMMOPpGGpPOMMgO",
+    "OgMOPpGEEGpPOMgO",
+    "OgMOPGEEeGGPOMgO",
+    "OgMOPGGEEEGPOMgO",
+    "OgMOPpGGEepPOMgO",
+    "OgMMOPpGEpPOMMgO",
+    "OgbSMOPPPPOMbSgO",
+    "OgBbMMOOOOMMBbgO",
+    "OHggggggggggggSO",
+    "OHbSSSSSSSSSSbSO",
+    "OOOOOOOOOOOOOOOO",
+]
+
+
+def generate_creative_generator():
+    """4-frame pulsing glow animation, same on every face."""
+    strip = Image.new("RGBA", (16, 64), CLEAR)
+    pulses = [0.0, 0.35, 0.7, 0.35]
+    for f, t in enumerate(pulses):
+        pal = dict(CARTOON)
+        pal["g"] = mix(hexc("#c23bb8"), hexc("#ff9af0"), t)        # rim glow
+        pal["G"] = mix(hexc("#ff6ae6"), hexc("#ffe6fd"), t)        # core glow
+        pal["P"] = mix(hexc("#9a52f0"), hexc("#c99bff"), t)
+        frame = grid(CREATIVE_GEN, pal)
+        strip.paste(frame, (0, f * 16))
+    strip.save(out("block/creative_generator.png"))
+    with open(out("block/creative_generator.png.mcmeta"), "w") as fh:
+        fh.write('{\n  "animation": {\n    "frametime": 4,\n    "interpolate": true\n  }\n}\n')
+
+
 # ---------------------------------------------------------------------------
 # GUI (256x256), dark-slate theme shared with Mycelial Power: outlined panel,
 # recessed slots and bars, tick-marked vertical energy gauge, purple glow fills.
@@ -740,6 +776,7 @@ def main():
     generate_wool_items()
     generate_sheep_fur()
     generate_block()
+    generate_creative_generator()
     generate_gui()
     generate_jei()
     print("Textures written to", os.path.abspath(ROOT))

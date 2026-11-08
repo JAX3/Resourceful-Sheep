@@ -61,6 +61,7 @@ public class ResourcefulSheepJeiPlugin implements IModPlugin {
             registration.addItemStackInfo(wool, Component.translatable("jei.resourcefulsheep.info.resource_wool"));
         }
         registration.addItemStackInfo(new ItemStack(ModItems.MECHANICAL_SEPARATOR.get()), Component.translatable("jei.resourcefulsheep.info.separator"));
+        registration.addItemStackInfo(new ItemStack(ModItems.CREATIVE_GENERATOR.get()), Component.translatable("jei.resourcefulsheep.info.creative_generator"));
     }
 
     static List<SeparationDisplay> buildSeparations(SheepResourceRegistry resources) {

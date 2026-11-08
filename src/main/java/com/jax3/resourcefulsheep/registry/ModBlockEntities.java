@@ -1,6 +1,7 @@
 package com.jax3.resourcefulsheep.registry;
 
 import com.jax3.resourcefulsheep.ResourcefulSheep;
+import com.jax3.resourcefulsheep.blockentity.CreativeGeneratorBlockEntity;
 import com.jax3.resourcefulsheep.blockentity.MechanicalSeparatorBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
@@ -12,6 +13,9 @@ public final class ModBlockEntities {
 
     public static final Supplier<BlockEntityType<MechanicalSeparatorBlockEntity>> MECHANICAL_SEPARATOR = REGISTER.register("mechanical_separator",
             () -> new BlockEntityType<>(MechanicalSeparatorBlockEntity::new, ModBlocks.MECHANICAL_SEPARATOR.get()));
+
+    public static final Supplier<BlockEntityType<CreativeGeneratorBlockEntity>> CREATIVE_GENERATOR = REGISTER.register("creative_generator",
+            () -> new BlockEntityType<>(CreativeGeneratorBlockEntity::new, ModBlocks.CREATIVE_GENERATOR.get()));
 
     private ModBlockEntities() {}
 }

@@ -175,12 +175,15 @@ public final class DevScreenshotHarness {
         level.setBlock(idle, ModBlocks.MECHANICAL_SEPARATOR.get().defaultBlockState().setValue(MechanicalSeparatorBlock.FACING, Direction.SOUTH), 3);
         level.setBlock(active, ModBlocks.MECHANICAL_SEPARATOR.get().defaultBlockState().setValue(MechanicalSeparatorBlock.FACING, Direction.SOUTH), 3);
         level.setBlock(o.offset(0, 0, -8), ModBlocks.MECHANICAL_SEPARATOR.get().defaultBlockState().setValue(MechanicalSeparatorBlock.FACING, Direction.WEST), 3);
+        level.setBlock(o.offset(3, 0, -8), ModBlocks.CREATIVE_GENERATOR.get().defaultBlockState(), 3);
+        level.setBlock(o.offset(5, 0, -3), ModBlocks.CREATIVE_GENERATOR.get().defaultBlockState(), 3);
         if (level.getBlockEntity(active) instanceof MechanicalSeparatorBlockEntity be) {
             fill(be, 64);
         }
         // Inventory: every wool type plus the machine.
         player.getInventory().clearContent();
         player.getInventory().add(new ItemStack(ModItems.MECHANICAL_SEPARATOR.get(), 4));
+        player.getInventory().add(new ItemStack(ModItems.CREATIVE_GENERATOR.get(), 1));
         SheepResourceRegistry.server().all().forEach(r -> player.getInventory().add(ResourceWoolItem.create(r.id(), 16)));
         player.getInventory().add(new ItemStack(Items.IRON_BLOCK, 8));
         player.getInventory().add(new ItemStack(Items.SHEARS));

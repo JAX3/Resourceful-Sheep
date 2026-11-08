@@ -26,6 +26,7 @@ public final class ModCreativeTabs {
             .icon(() -> ResourceWoolItem.create(ResourcefulSheep.id("gold"), 1))
             .displayItems((params, output) -> {
                 output.accept(ModItems.MECHANICAL_SEPARATOR.get());
+                output.accept(ModItems.CREATIVE_GENERATOR.get());
                 SheepResourceRegistry loaded = SheepResourceRegistry.client();
                 if (loaded.isEmpty()) {
                     BUILT_IN.forEach(name -> output.accept(ResourceWoolItem.create(ResourcefulSheep.id(name), 1)));

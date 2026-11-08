@@ -48,6 +48,7 @@ public final class ResourcefulSheepClient {
         NeoForge.EVENT_BUS.addListener(ResourcefulSheepClient::onRecipesReceived);
         NeoForge.EVENT_BUS.addListener(ResourcefulSheepClient::onLoggingOut);
         NeoForge.EVENT_BUS.addListener(ResourcefulSheepClient::onEntityTick);
+        NeoForge.EVENT_BUS.addListener(ResourcefulSheepClient::onItemTooltip);
 
         DevScreenshotHarness.registerIfEnabled();
     }
@@ -83,6 +84,13 @@ public final class ResourcefulSheepClient {
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         SheepResourceRegistry.setClient(new SheepResourceRegistry(Map.of()));
         SeparationLookup.setClientRecipes(RecipeMap.EMPTY);
+    }
+
+    private static void onItemTooltip(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {
+        if (event.getItemStack().is(com.jax3.resourcefulsheep.registry.ModItems.CREATIVE_GENERATOR.get())) {
+            event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("tooltip.resourcefulsheep.creative_generator")
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
     }
 
     /** Occasional resource-coloured particles around infused sheep that still have wool. */

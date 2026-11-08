@@ -88,6 +88,7 @@ public final class ModGameTests {
         TESTS.put("separating_recipe_handles_plain_wool", ModGameTests::separatingRecipe);
         TESTS.put("config_multipliers_affect_values", ModGameTests::configMultipliers);
         TESTS.put("custom_definition_with_tag_parses", ModGameTests::customDefinitionParses);
+        TESTS.put("creative_generator_powers_separator", ModGameTests::creativeGeneratorPowers);
         TESTS.forEach((name, fn) -> FUNCTIONS.register(name, () -> fn));
     }
 
@@ -436,5 +437,22 @@ public final class ModGameTests {
         h.assertTrue(SheepResource.DEFINITION_CODEC.parse(ops, JsonParser.parseString(bad)).error().isPresent(), "missing items are reported as errors");
         h.assertTrue(ModItems.RESOURCE_WOOL.get() != null, "items registered");
         h.succeed();
+    }
+
+    private static void creativeGeneratorPowers(GameTestHelper h) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        MechanicalSeparatorBlockEntity be = separator(h, pos); // facing north: back (south) accepts FE
+        h.setBlock(new BlockPos(3, 1, 4), ModBlocks.CREATIVE_GENERATOR.get());
+        be.getInventory().setStack(SeparatorInventory.INPUT, ResourceWoolItem.create(IRON, 1));
+        // Pull side: any face of the generator offers unlimited energy.
+        EnergyHandler source = h.getLevel().getCapability(Capabilities.Energy.BLOCK, h.absolutePos(new BlockPos(3, 1, 4)), Direction.UP);
+        h.assertTrue(source != null, "generator exposes an energy handler");
+        try (Transaction tx = Transaction.openRoot()) {
+            h.assertTrue(source.extract(5_000_000, tx) == 5_000_000, "unlimited extraction");
+        }
+        h.succeedWhen(() -> {
+            h.assertTrue(be.getEnergy().getEnergy() > 0, "generator should push FE into the separator");
+            h.assertTrue(be.getInventory().getStack(SeparatorInventory.PRIMARY).is(Items.RAW_IRON), "separator runs on generator power");
+        });
     }
 }

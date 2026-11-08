@@ -96,6 +96,7 @@ public final class ModConfigs {
         public final ModConfigSpec.IntValue autoPushInterval;
         public final ModConfigSpec.BooleanValue redstoneControlEnabled;
         public final ModConfigSpec.EnumValue<RedstoneMode> defaultRedstoneMode;
+        public final ModConfigSpec.IntValue creativeGeneratorOutput;
 
         Server(ModConfigSpec.Builder b) {
             b.comment("Resource infusion of sheep. Per-resource settings live in data/<namespace>/resourcefulsheep/sheep_resources/*.json")
@@ -176,6 +177,11 @@ public final class ModConfigs {
                     .define("redstoneControlEnabled", true);
             defaultRedstoneMode = b.comment("Redstone mode for newly placed machines.")
                     .defineEnum("defaultRedstoneMode", RedstoneMode.IGNORED);
+            b.pop();
+
+            b.comment("Creative Generator (creative-only infinite FE source for testing)").push("creative_generator");
+            creativeGeneratorOutput = b.comment("FE pushed into each adjacent energy receiver per tick (receivers still apply their own input limits). 0 disables pushing.")
+                    .defineInRange("creativeGeneratorOutput", 1_000_000, 0, Integer.MAX_VALUE);
             b.pop();
         }
 

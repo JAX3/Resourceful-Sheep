@@ -132,12 +132,21 @@ def block_models():
                 v["y"] = rot
             variants[f"active={active},facing={facing}"] = v
     write(os.path.join(ASSETS, "blockstates", "mechanical_separator.json"), {"variants": variants})
+    write(os.path.join(ASSETS, "models", "block", "creative_generator.json"),
+          {"parent": "minecraft:block/cube_all", "textures": {"all": f"{MOD}:block/creative_generator"}})
+    write(os.path.join(ASSETS, "blockstates", "creative_generator.json"),
+          {"variants": {"": {"model": f"{MOD}:block/creative_generator"}}})
+    write(os.path.join(ASSETS, "items", "creative_generator.json"),
+          {"model": {"type": "minecraft:model", "model": f"{MOD}:block/creative_generator"}})
 
 
 def lang():
     en = {
         "itemGroup.resourcefulsheep": "Resourceful Sheep",
         "block.resourcefulsheep.mechanical_separator": "Mechanical Separator",
+        "block.resourcefulsheep.creative_generator": "Creative Generator",
+        "tooltip.resourcefulsheep.creative_generator": "Infinite Forge Energy for testing. Pushes FE into adjacent machines; cables can also pull from any side.",
+        "jei.resourcefulsheep.info.creative_generator": "Creative-only. Produces unlimited Forge Energy (FE): every tick it pushes power into all adjacent energy receivers (rate set by creativeGeneratorOutput in the server config), and cables or machines can pull unlimited FE from any side. Place it next to a Mechanical Separator to test without a power setup.",
         "item.resourcefulsheep.resource_wool": "Resource Wool",
         "item.resourcefulsheep.resource_wool.named": "%s Wool",
         "item.resourcefulsheep.resource_wool.unknown": "Unknown Resource Wool",
@@ -219,6 +228,7 @@ def lang():
         "resourcefulsheep.configuration.section.resourcefulsheep.client.toml.title": "Client",
         "resourcefulsheep.configuration.sheep": "Sheep",
         "resourcefulsheep.configuration.separator": "Mechanical Separator",
+        "resourcefulsheep.configuration.creative_generator": "Creative Generator",
     }
     for name, r in RESOURCES.items():
         en[f"resource.{MOD}.{name}"] = r["display"]

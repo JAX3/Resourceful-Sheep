@@ -57,6 +57,13 @@ C R C      C = Copper Ingot   R = Redstone
 - Hardness 3.5, blast resistance 6.
 - When broken, it keeps its stored energy and redstone mode.
 
+### Creative Generator (testing)
+A creative-only block, found in the Resourceful Sheep creative tab. It has no recipe and can't be broken in survival.
+- Produces **unlimited Forge Energy**.
+- Every tick it pushes FE into all adjacent energy receivers. The rate is `creativeGeneratorOutput` (1,000,000 FE/t by default); receivers still apply their own input limits.
+- Cables and machines can also **pull** unlimited FE from any side.
+- Place it against any energy face of a Mechanical Separator to test without building a power setup.
+
 ### Built-in resources
 
 | Fed item | Wool | Separator output | Uses | FE / time |
@@ -166,6 +173,12 @@ Other useful tasks:
 | `itemOutputSides` | BOTTOM | Faces to extract from and auto-push into |
 | `autoPushOutputs` / `autoPushInterval` | true / 10 | Automatic output |
 | `redstoneControlEnabled` / `defaultRedstoneMode` | true / IGNORED | Redstone behaviour |
+
+**`[creative_generator]`**
+
+| Key | Default | Meaning |
+|---|---|---|
+| `creativeGeneratorOutput` | 1000000 | FE pushed into each adjacent receiver per tick (0 = only allow pulling) |
 
 ### Client config
 `config/resourcefulsheep-client.toml`:

@@ -13,7 +13,7 @@ Environment:
 ## Unit tests ✅ (`./gradlew test`): 5/5 passed
 Relative side mapping for every facing, side-name parsing, redstone modes, infusion countdown and cooldown, and permanent infusions.
 
-## In-world game tests ✅ (`./gradlew runGameTestServer`): all 19 required tests passed
+## In-world game tests ✅ (`./gradlew runGameTestServer`): all 20 required tests passed
 These run on a **dedicated-server** game test server, which also confirms the mod loads with no client classes present.
 
 | Test | Verifies |
@@ -35,6 +35,7 @@ These run on a **dedicated-server** game test server, which also confirms the mo
 | `separator_state_survives_save_and_load` | Energy, progress and inventory round-trip through block entity save/load. |
 | `separating_recipe_handles_plain_wool` | The custom recipe type matches `#minecraft:wool` → 3 String. Dirt is not separable. |
 | `config_multipliers_affect_values` | Speed ×2 → 50 ticks and energy ×0.5 → 10,000 FE. Restored afterwards. |
+| `creative_generator_powers_separator` | Generator placed behind a separator pushes FE in, and the separator processes Iron Wool on that power alone. Any face allows unlimited extraction (5,000,000 FE pulled in one call). |
 | `custom_definition_with_tag_parses` | A definition using a `#c:storage_blocks/iron` tag, a display name, hex and `[r,g,b]` colours and a custom separator block parses and behaves correctly. Missing items are reported as errors. |
 
 ## Real client run ✅ (`./gradlew runClient -PscreenshotHarness`)
