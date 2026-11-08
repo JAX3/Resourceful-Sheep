@@ -28,14 +28,15 @@ public class MechanicalSeparatorScreen extends AbstractContainerScreen<Mechanica
     private static final Identifier TEXTURE = ResourcefulSheep.id("textures/gui/mechanical_separator.png");
     private static final int TEX = 256;
 
-    // Energy bar (inner fill area) and its sprite.
-    private static final int BAR_X = 35, BAR_Y = 19, BAR_W = 106, BAR_H = 10;
-    private static final int BAR_U = 0, BAR_V = 194;
+    // Vertical energy gauge (inner fill area, fills bottom-up) and its sprite.
+    private static final int BAR_X = 11, BAR_Y = 19, BAR_W = 12, BAR_H = 64;
+    private static final int BAR_U = 176, BAR_V = 96;
+    private static final int TEXT_COLOR = 0xFFDFE4F5, TEXT_DIM = 0xFFAEB4C6;
     // Progress arrow and its filled sprite.
     private static final int ARROW_X = 66, ARROW_Y = 56, ARROW_W = 32, ARROW_H = 16;
-    private static final int ARROW_U = 106, ARROW_V = 194;
+    private static final int ARROW_U = 0, ARROW_V = 194;
     // Spinning gear (4 animation frames, 12x12) drawn inside the arrow housing while processing.
-    private static final int GEAR_X = 76, GEAR_Y = 74, GEAR_SIZE = 12;
+    private static final int GEAR_X = 76, GEAR_Y = 72, GEAR_SIZE = 12;
     private static final int GEAR_U = 138, GEAR_V = 194;
     // Status lamp (8x8 sprites per status) and redstone button.
     private static final int LAMP_X = 9, LAMP_Y = 87;
@@ -61,9 +62,10 @@ public class MechanicalSeparatorScreen extends AbstractContainerScreen<Mechanica
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, TEX, TEX);
 
         // Energy bar fills left to right.
-        int energyWidth = Mth.ceil(menu.getEnergyFraction() * BAR_W);
-        if (energyWidth > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + BAR_X, y + BAR_Y, BAR_U, BAR_V, energyWidth, BAR_H, TEX, TEX);
+        int energyHeight = Mth.ceil(menu.getEnergyFraction() * BAR_H);
+        if (energyHeight > 0) {
+            int offset = BAR_H - energyHeight;
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + BAR_X, y + BAR_Y + offset, BAR_U, BAR_V + offset, BAR_W, energyHeight, TEX, TEX);
         }
 
         // Progress arrow.
@@ -90,17 +92,19 @@ public class MechanicalSeparatorScreen extends AbstractContainerScreen<Mechanica
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        super.extractLabels(graphics, mouseX, mouseY);
+        // Light text for the dark slate theme (the vanilla labels are dark grey).
+        graphics.text(font, title, titleLabelX, titleLabelY, TEXT_COLOR, false);
+        graphics.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, TEXT_DIM, false);
         // Stored / max FE, centred under the bar.
         Component energy = Component.translatable("gui.resourcefulsheep.energy_short", fe(menu.getEnergy()), fe(menu.getCapacity()));
-        graphics.text(font, energy, (imageWidth - font.width(energy)) / 2, 33, 0xFF3F3F3F, false);
+        graphics.text(font, energy, 34 + (118 - font.width(energy)) / 2, 28, TEXT_DIM, false);
 
         // Status line, coloured like the lamp.
         MachineStatus status = menu.getStatus();
         Component line = status == MachineStatus.PROCESSING
                 ? Component.translatable("gui.resourcefulsheep.processing_percent", Math.round(menu.getProgressFraction() * 100))
                 : status.displayName();
-        graphics.text(font, line, LAMP_X + 11, LAMP_Y, darken(status.color), false);
+        graphics.text(font, line, LAMP_X + 13, LAMP_Y + 1, status.color, false);
     }
 
     @Override
@@ -162,10 +166,5 @@ public class MechanicalSeparatorScreen extends AbstractContainerScreen<Mechanica
 
     private static String fe(long value) {
         return String.format(Locale.ROOT, "%,d", value);
-    }
-
-    private static int darken(int argb) {
-        int r = (argb >> 16 & 0xFF) * 3 / 5, g = (argb >> 8 & 0xFF) * 3 / 5, b = (argb & 0xFF) * 3 / 5;
-        return 0xFF000000 | r << 16 | g << 8 | b;
     }
 }

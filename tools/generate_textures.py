@@ -266,143 +266,189 @@ def generate_sheep_fur():
 
 
 # ---------------------------------------------------------------------------
-# Mechanical Separator block textures (16x16).
+# Mechanical Separator block textures (16x16), cartoon style shared with the
+# sister project Mycelial Power: thick dark outlines, flat slate metal with one
+# highlight and one shadow tone, chunky bolts and glowing purple ports. Where
+# Mycelial Power grows moss, the separator sheds tufts of wool.
+# Each texture is a hand-placed character grid; edit the grids directly.
 # ---------------------------------------------------------------------------
-STEEL = {
-    "edge": hexc("#3B3F45"), "dark": hexc("#5A6068"), "mid": hexc("#7D848D"),
-    "light": hexc("#A3AAB3"), "hi": hexc("#C9CED4"), "rivet": hexc("#D9DDE1"),
-    "copper": hexc("#C46A3A"), "copper_d": hexc("#8A4526"), "copper_l": hexc("#E8955F"),
-    "glass": hexc("#1E2A33"), "glass_l": hexc("#2F4554"),
-    "red": hexc("#B3261E"), "red_l": hexc("#FF5A4A"),
+CARTOON = {
+    "O": hexc("#231c35"),                                            # outline
+    "M": hexc("#5d6687"), "H": hexc("#8d97bc"), "S": hexc("#3f4766"),  # metal / highlight / shadow
+    "B": hexc("#dfe4f5"), "b": hexc("#9aa3c4"),                      # bolt highlight / bolt
+    "P": hexc("#9a52f0"), "p": hexc("#5c2aa6"),                      # port ring / ring shadow
+    "G": hexc("#ffd2fb"), "g": hexc("#ff6ae6"),                      # port glow centre / glow
+    "W": hexc("#ffffff"), "w": hexc("#e3e1ea"), "v": hexc("#b7b3c6"),  # wool light / wool / wool shadow
+    "K": hexc("#141019"), "k": hexc("#2a2238"),                      # dark chamber / chamber edge
+    "C": hexc("#f2b24a"), "c": hexc("#b86f22"), "Y": hexc("#ffe58a"),  # brass gear / gear shadow / gear shine
+    "R": hexc("#ff4b4b"), "r": hexc("#7d3a44"),                      # status light lit / unlit
+    "E": hexc("#ffe14a"), "e": hexc("#c98a12"),                      # energy bolt / bolt shadow
 }
 
+SEP_SIDE = [
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbSMMMMMMMMbSSO",
+    "OHMMMMOOOOMMMMSO",
+    "OHMMMOPPPPOMMMSO",
+    "OHMMOPpggpPOMMSO",
+    "OHMMOPgGGgPOMMSO",
+    "OHMMOPgGGgPOMMSO",
+    "OHMMOPpggpPOMMSO",
+    "OHMMMOPPPPOMMMSO",
+    "OHMwMMOOOOMMwMSO",
+    "OHwWwMMMMMMwWwSO",
+    "OwWWWwMwMMwWWWwO",
+    "OvwWwwvWwvwwWwvO",
+    "OOOOOOOOOOOOOOOO",
+]
 
-def frame_base():
-    img = Image.new("RGBA", (16, 16), STEEL["mid"])
-    rnd = random.Random(9)
-    for y in range(16):
-        for x in range(16):
-            n = rnd.randint(-6, 6)
-            c = STEEL["mid"]
-            img.putpixel((x, y), (c[0] + n, c[1] + n, c[2] + n, 255))
-    # Bevelled frame
-    for i in range(16):
-        img.putpixel((i, 0), STEEL["hi"])
-        img.putpixel((0, i), STEEL["hi"])
-        img.putpixel((i, 15), STEEL["edge"])
-        img.putpixel((15, i), STEEL["edge"])
-        img.putpixel((i, 1), STEEL["light"])
-        img.putpixel((1, i), STEEL["light"])
-        img.putpixel((i, 14), STEEL["dark"])
-        img.putpixel((14, i), STEEL["dark"])
-    for (x, y) in [(2, 2), (13, 2), (2, 13), (13, 13)]:
-        img.putpixel((x, y), STEEL["rivet"])
-        img.putpixel((x + 1, y + 1) if x < 13 and y < 13 else (x, y), STEEL["rivet"])
+SEP_TOP = [  # wool intake hopper with fluff caught in the grate
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbOOOOOOOOOObSO",
+    "OHMOkkkkkkkkOMSO",
+    "OHMOKwWKKKKKOMSO",
+    "OHMOkkkkkkkkOMSO",
+    "OHMOKKKKKWwKOMSO",
+    "OHMOkkkkkkkkOMSO",
+    "OHMOKKwWKKKKOMSO",
+    "OHMOkkkkkkkkOMSO",
+    "OHMOKKKKKKKKOMSO",
+    "OHbOOOOOOOOOObSO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbSSSSSSSSSbSSO",
+    "OOOOOOOOOOOOOOOO",
+]
+
+SEP_BOTTOM = [  # output chute
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbSMMMMMMMMbSSO",
+    "OHMMMMMMMMMMMMSO",
+    "OHMMMOOOOOOMMMSO",
+    "OHMMOKkKkKkKOMSO",
+    "OHMMOkKkKkKkOMSO",
+    "OHMMOKkKkKkKOMSO",
+    "OHMMOkKkKkKkOMSO",
+    "OHMMMOOOOOOMMMSO",
+    "OHMMMMMMMMMMMMSO",
+    "OHMMMMMMMMMMMMSO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbSSSSSSSSSbSSO",
+    "OOOOOOOOOOOOOOOO",
+]
+
+SEP_BACK = [  # glowing FE input port with an energy bolt
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHBbMMMMMMMMBbSO",
+    "OHbSMOOOOOOMbSSO",
+    "OHMMOPPPPPPOMMSO",
+    "OHMOPpggggpPOMSO",
+    "OHMOPgggEegPOMSO",
+    "OHMOPggEegggOMSO",
+    "OHMOPgEEEEegOMSO",
+    "OHMOPgggEegPOMSO",
+    "OHMOPggEeggPOMSO",
+    "OHMMOPpggpPOMMSO",
+    "OHMMMOPPPPOMMMSO",
+    "OHBbMMOOOOMMBbSO",
+    "OHbSSSSSSSSSbSSO",
+    "OOOOOOOOOOOOOOOO",
+]
+
+# Front: purple-rimmed processing window with a brass gear and a tuft of wool being pulled apart.
+SEP_FRONT_FRAME = [
+    "OOOOOOOOOOOOOOOO",
+    "OHHHHHHHHHHHHHMO",
+    "OHPPPPPPPPPPPPSO",
+    "OHPOOOOOOOOOOpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPO........OpSO",
+    "OHPOOOOOOOOOOpSO",
+    "OwppppppppppppvO",
+    "OvwWwwvWwvwwWwvO",
+    "OOOOOOOOOOOOOOOO",
+]
+
+# 8x8 window contents (drawn at 4,4). Two gear poses alternate; wool tufts drift right while active.
+GEAR_POSES = [
+    ["..C..C..", ".CCCCCC.", "CCcYYcCC", ".CY..YC.", ".CY..YC.", "CCcYYcCC", ".CCCCCC.", "..C..C.."],
+    [".C....C.", "CCCCCCCC", ".CcYYcC.", ".cY..Yc.", ".cY..Yc.", ".CcYYcC.", "CCCCCCCC", ".C....C."],
+]
+
+
+def grid(rows, pal, img=None, ox=0, oy=0):
+    if img is None:
+        img = Image.new("RGBA", (16, 16), CLEAR)
+    for y, row in enumerate(rows):
+        for x, ch in enumerate(row):
+            if ch in pal:
+                img.putpixel((ox + x, oy + y), pal[ch])
     return img
 
 
-GEAR_PIXELS = {
-    # 8x8 gear sprite frames (rotation by 22.5deg approximated with 2 alternating poses)
-    0: ["..#..#..", ".######.", "##.##.##", ".##..##.", ".##..##.", "##.##.##", ".######.", "..#..#.."],
-    1: [".#....#.", "########", ".#.##.#.", ".##..##.", ".##..##.", ".#.##.#.", "########", ".#....#."],
-}
-
-
-def draw_gear(img, ox, oy, frame, color, dark):
-    pose = GEAR_PIXELS[frame % 2]
-    for y, row in enumerate(pose):
-        for x, ch in enumerate(row):
-            if ch == "#":
-                img.putpixel((ox + x, oy + y), color if (x + y + frame) % 3 else dark)
+def separator_front(frame, active):
+    img = grid(SEP_FRONT_FRAME, CARTOON)
+    window = {"K": CARTOON["K"]}
+    for y in range(4, 12):
+        for x in range(4, 12):
+            img.putpixel((x, y), CARTOON["K"] if (x + y) % 5 else CARTOON["k"])
+    pal = dict(CARTOON) if active else {
+        "C": hexc("#8a7a6a"), "c": hexc("#5e5248"), "Y": hexc("#a89a8a")}
+    grid(GEAR_POSES[frame % 2], pal, img, 4, 4)
+    if active:
+        # wool tufts being separated: drift across the window
+        for (wx, wy) in [((frame * 2) % 8 + 4, 10), ((frame * 2 + 4) % 8 + 4, 5)]:
+            img.putpixel((wx, wy), CARTOON["W"])
+            if wx + 1 < 12:
+                img.putpixel((wx + 1, wy), CARTOON["w"])
+        # glow rim
+        for x in range(3, 13):
+            img.putpixel((x, 2), CARTOON["g"] if frame % 2 else CARTOON["P"])
+    # status light on the right rim
+    img.putpixel((13, 6), CARTOON["R"] if active else CARTOON["r"])
+    img.putpixel((13, 7), CARTOON["R"] if active else CARTOON["r"])
+    return img
 
 
 def generate_block():
-    # Side: panels with copper piping
-    side = frame_base()
-    for x in range(3, 13):
-        side.putpixel((x, 7), STEEL["copper"])
-        side.putpixel((x, 8), STEEL["copper_d"])
-        side.putpixel((x, 6), STEEL["copper_l"])
-    for y in range(3, 13):
-        side.putpixel((7, y), STEEL["dark"])
-        side.putpixel((8, y), STEEL["light"])
-    for (x, y) in [(4, 4), (11, 4), (4, 11), (11, 11)]:
-        side.putpixel((x, y), STEEL["dark"])
-    side.save(out("block/mechanical_separator_side.png"))
-
-    # Top: intake grate (where wool goes in)
-    top = frame_base()
-    for y in range(3, 13):
-        for x in range(3, 13):
-            top.putpixel((x, y), STEEL["glass"] if (y % 2 == 0) else STEEL["dark"])
-    for x in range(3, 13):
-        top.putpixel((x, 3), STEEL["edge"])
-        top.putpixel((x, 12), STEEL["light"])
-    top.save(out("block/mechanical_separator_top.png"))
-
-    # Bottom: plain heavy plate with output vent
-    bottom = frame_base()
-    for x in range(5, 11):
-        for y in range(6, 10):
-            bottom.putpixel((x, y), STEEL["edge"] if y % 2 else STEEL["dark"])
-    bottom.save(out("block/mechanical_separator_bottom.png"))
-
-    # Back: FE input port (red/copper socket with lightning mark)
-    back = frame_base()
-    for y in range(4, 12):
-        for x in range(4, 12):
-            back.putpixel((x, y), STEEL["dark"])
-    for y in range(5, 11):
-        for x in range(5, 11):
-            back.putpixel((x, y), STEEL["copper_d"])
-    bolt = [(8, 5), (7, 6), (7, 7), (6, 8), (7, 8), (8, 8), (8, 9), (7, 10)]
-    for (x, y) in bolt:
-        back.putpixel((x, y), hexc("#FFE14A"))
-    back.save(out("block/mechanical_separator_back.png"))
-
-    # Front: processing chamber window with gears. Inactive = still, active = 4-frame animation strip.
-    def front(frame, active):
-        img = frame_base()
-        # Window
-        for y in range(3, 13):
-            for x in range(3, 13):
-                img.putpixel((x, y), STEEL["glass"])
-        for x in range(3, 13):
-            img.putpixel((x, 3), STEEL["edge"])
-            img.putpixel((x, 12), STEEL["hi"])
-        for y in range(3, 13):
-            img.putpixel((3, y), STEEL["edge"])
-            img.putpixel((12, y), STEEL["hi"])
-        gear_c = STEEL["copper_l"] if active else STEEL["copper"]
-        draw_gear(img, 4, 4, frame, gear_c, STEEL["copper_d"])
-        # Glass reflection
-        img.putpixel((11, 4), STEEL["glass_l"])
-        img.putpixel((10, 5), STEEL["glass_l"])
-        # Fluff inside when active: wool tufts being pulled apart
-        if active:
-            for (x, y) in [((frame * 3) % 6 + 5, 10), ((frame * 5 + 2) % 6 + 5, 11)]:
-                img.putpixel((x, y), hexc("#F2F2F2"))
-        # Status light
-        img.putpixel((13, 7), STEEL["red_l"] if active else STEEL["red"])
-        img.putpixel((13, 8), STEEL["red_l"] if active else STEEL["red"])
-        return img
-
-    front(0, False).save(out("block/mechanical_separator_front.png"))
+    grid(SEP_SIDE, CARTOON).save(out("block/mechanical_separator_side.png"))
+    grid(SEP_TOP, CARTOON).save(out("block/mechanical_separator_top.png"))
+    grid(SEP_BOTTOM, CARTOON).save(out("block/mechanical_separator_bottom.png"))
+    grid(SEP_BACK, CARTOON).save(out("block/mechanical_separator_back.png"))
+    separator_front(0, False).save(out("block/mechanical_separator_front.png"))
     strip = Image.new("RGBA", (16, 64), CLEAR)
     for f in range(4):
-        strip.paste(front(f, True), (0, f * 16))
+        strip.paste(separator_front(f, True), (0, f * 16))
     strip.save(out("block/mechanical_separator_front_active.png"))
     with open(out("block/mechanical_separator_front_active.png.mcmeta"), "w") as fh:
         fh.write('{\n  "animation": {\n    "frametime": 3,\n    "interpolate": false\n  }\n}\n')
 
 
 # ---------------------------------------------------------------------------
-# GUI (256x256): background 176x193 + sprite strip at y >= 194.
+# GUI (256x256), dark-slate theme shared with Mycelial Power: outlined panel,
+# recessed slots and bars, tick-marked vertical energy gauge, purple glow fills.
+# Background is 176x193 at (0,0); sprites live in the free space around it:
+#   (176,0)   4x 16x16 redstone mode icons     (176,64) 16x16 button / (192,64) hovered
+#   (176,96)  12x64 energy fill                (0,194)  32x16 progress arrow fill
+#   (138,194) 4x 12x12 gear frames             (186,194) 6x 8x8 status lamps
 # ---------------------------------------------------------------------------
 GUI = {
-    "bg": hexc("#C6C6C6"), "white": hexc("#FFFFFF"), "shadow": hexc("#555555"),
-    "black": hexc("#000000"), "slot": hexc("#8B8B8B"), "slot_d": hexc("#373737"),
-    "panel": hexc("#B4B9BF"), "panel_d": hexc("#6F757C"), "panel_l": hexc("#DDE1E5"),
+    "bg": hexc("#3a3d45"), "light": hexc("#5f6470"), "shadow": hexc("#202228"), "outline": hexc("#0f1013"),
+    "inset_dark": hexc("#17181c"), "inset_light": hexc("#6a6f7c"), "slot": hexc("#2a2c33"),
+    "panel": hexc("#1b1c21"), "gauge": hexc("#141519"), "tick": hexc("#2b2d35"),
+    "white": hexc("#ffffff"),
 }
 
 
@@ -412,70 +458,61 @@ def rect(img, x0, y0, x1, y1, c):
             img.putpixel((x, y), c)
 
 
-def bevel_panel(img, x, y, w, h):
-    """Standard vanilla-style window: black outline, white top-left, grey bottom-right."""
-    rect(img, x, y, x + w, y + h, GUI["bg"])
-    for i in range(x + 2, x + w - 2):
-        img.putpixel((i, y), GUI["black"])
-        img.putpixel((i, y + h - 1), GUI["black"])
-        img.putpixel((i, y + 1), GUI["white"])
-        img.putpixel((i, y + 2), GUI["white"])
-        img.putpixel((i, y + h - 2), GUI["shadow"])
-        img.putpixel((i, y + h - 3), GUI["shadow"])
-    for j in range(y + 2, y + h - 2):
-        img.putpixel((x, j), GUI["black"])
-        img.putpixel((x + w - 1, j), GUI["black"])
-        img.putpixel((x + 1, j), GUI["white"])
-        img.putpixel((x + 2, j), GUI["white"])
-        img.putpixel((x + w - 2, j), GUI["shadow"])
-        img.putpixel((x + w - 3, j), GUI["shadow"])
-    # rounded corners
-    for (cx, cy) in [(x + 1, y + 1), (x + w - 2, y + h - 2)]:
-        img.putpixel((cx, cy), GUI["black"])
-    img.putpixel((x + w - 2, y + 1), GUI["black"])
-    img.putpixel((x + 1, y + h - 2), GUI["black"])
-    img.putpixel((x + 3, y + 3), GUI["white"])
-    img.putpixel((x + w - 4, y + h - 4), GUI["shadow"])
-    img.putpixel((x + w - 3, y + 2), GUI["bg"])
-    img.putpixel((x + 2, y + h - 3), GUI["bg"])
+def panel(img, x0, y0, x1, y1):
+    """Outlined slate window, bounds [x0, x1) x [y0, y1)."""
+    rect(img, x0, y0, x1, y1, GUI["bg"])
+    for x in range(x0 + 1, x1 - 1):
+        img.putpixel((x, y0), GUI["outline"])
+        img.putpixel((x, y1 - 1), GUI["outline"])
+    for y in range(y0 + 1, y1 - 1):
+        img.putpixel((x0, y), GUI["outline"])
+        img.putpixel((x1 - 1, y), GUI["outline"])
+    for x in range(x0 + 1, x1 - 2):
+        img.putpixel((x, y0 + 1), GUI["light"])
+    for y in range(y0 + 1, y1 - 2):
+        img.putpixel((x0 + 1, y), GUI["light"])
+    for x in range(x0 + 2, x1 - 1):
+        img.putpixel((x, y1 - 2), GUI["shadow"])
+    for y in range(y0 + 2, y1 - 1):
+        img.putpixel((x1 - 2, y), GUI["shadow"])
+    for (x, y) in [(x0, y0), (x1 - 1, y0), (x0, y1 - 1), (x1 - 1, y1 - 1)]:
+        img.putpixel((x, y), CLEAR)
 
 
-def slot(img, x, y, size=18):
-    """Slot frame whose inner 16x16 starts at (x+1, y+1)."""
-    rect(img, x, y, x + size, y + size, GUI["slot"])
-    for i in range(size - 1):
-        img.putpixel((x + i, y), GUI["slot_d"])
-        img.putpixel((x, y + i), GUI["slot_d"])
-    for i in range(1, size):
-        img.putpixel((x + i, y + size - 1), GUI["white"])
-        img.putpixel((x + size - 1, y + i), GUI["white"])
+def inset(img, x0, y0, x1, y1, fill):
+    """Recessed box, bounds [x0, x1) x [y0, y1)."""
+    rect(img, x0, y0, x1, y1, fill)
+    for x in range(x0, x1):
+        img.putpixel((x, y0), GUI["inset_dark"])
+    for y in range(y0, y1):
+        img.putpixel((x0, y), GUI["inset_dark"])
+    for x in range(x0 + 1, x1):
+        img.putpixel((x, y1 - 1), GUI["inset_light"])
+    for y in range(y0 + 1, y1):
+        img.putpixel((x1 - 1, y), GUI["inset_light"])
 
 
-def big_slot(img, x, y):
-    """26x26 output slot (frame around an 18x18) in a darker industrial style."""
-    rect(img, x, y, x + 26, y + 26, GUI["panel_d"])
-    slot(img, x + 4, y + 4)
+def slot(img, item_x, item_y):
+    inset(img, item_x - 1, item_y - 1, item_x + 17, item_y + 17, GUI["slot"])
 
 
-def inset(img, x, y, w, h, fill):
-    rect(img, x, y, x + w, y + h, fill)
-    for i in range(w):
-        img.putpixel((x + i, y), GUI["slot_d"])
-        img.putpixel((x + i, y + h - 1), GUI["white"])
-    for j in range(h):
-        img.putpixel((x, y + j), GUI["slot_d"])
-        img.putpixel((x + w - 1, y + j), GUI["white"])
+def big_slot(img, item_x, item_y):
+    inset(img, item_x - 5, item_y - 5, item_x + 21, item_y + 21, GUI["panel"])
+    slot(img, item_x, item_y)
 
 
-def screw(img, x, y):
-    img.putpixel((x, y), GUI["panel_d"])
-    img.putpixel((x + 1, y), GUI["white"])
-    img.putpixel((x, y + 1), GUI["shadow"])
-    img.putpixel((x + 1, y + 1), GUI["panel_d"])
+def sheep_icon(img, x, y, wool):
+    """Tiny 7x5 sheep, the separator's counterpart to Mycelial Power's mushroom icons."""
+    rows = [".www...", "wwwwwhh", "wwwwwhe", ".l.l.l.", ".l.l.l."]
+    pal = {"w": wool, "h": hexc("#d9c3a6"), "e": hexc("#1a1a1a"), "l": hexc("#5a4632")}
+    for dy, row in enumerate(rows):
+        for dx, ch in enumerate(row):
+            if ch in pal:
+                img.putpixel((x + dx, y + dy), pal[ch])
 
 
 def arrow_shape(fill, outline):
-    """32x16 right-pointing arrow."""
+    """32x16 right-pointing arrow with an outline."""
     a = Image.new("RGBA", (32, 16), CLEAR)
     for y in range(5, 11):
         for x in range(1, 22):
@@ -484,7 +521,6 @@ def arrow_shape(fill, outline):
         for y in range(8 - i - 1, 8 + i + 1):
             if 0 <= y < 16:
                 a.putpixel((22 + (7 - i), y), fill)
-    # outline
     px = a.load()
     o = Image.new("RGBA", (32, 16), CLEAR)
     for y in range(16):
@@ -501,133 +537,113 @@ def arrow_shape(fill, outline):
 
 def generate_gui():
     img = Image.new("RGBA", (256, 256), CLEAR)
-    W, H = 176, 193
-    bevel_panel(img, 0, 0, W, H)
+    panel(img, 0, 0, 176, 193)
 
-    # Machine "faceplate" area behind the processing section
-    rect(img, 7, 14, 169, 98, GUI["panel"])
-    for i in range(7, 169):
-        img.putpixel((i, 14), GUI["panel_d"])
-        img.putpixel((i, 97), GUI["panel_l"])
-    for j in range(14, 98):
-        img.putpixel((7, j), GUI["panel_d"])
-        img.putpixel((168, j), GUI["panel_l"])
-    for (sx, sy) in [(9, 16), (165, 16), (9, 94), (165, 94)]:
-        screw(img, sx, sy)
-    # Hazard stripe along the top of the faceplate
-    for x in range(12, 30):
-        c = hexc("#E3B341") if (x // 3) % 2 == 0 else hexc("#3A3A3A")
-        img.putpixel((x, 18), c)
-        img.putpixel((x, 19), c)
-    for x in range(146, 164):
-        c = hexc("#E3B341") if (x // 3) % 2 == 0 else hexc("#3A3A3A")
-        img.putpixel((x, 18), c)
-        img.putpixel((x, 19), c)
+    # Vertical energy gauge (outer 10..24 x 18..84, fill area 11..23 x 19..83 = 12x64) with tick marks.
+    inset(img, 10, 18, 25, 84, GUI["gauge"])
+    for ty in range(23, 83, 6):
+        for x in range(19, 23):
+            img.putpixel((x, ty), GUI["tick"])
+    # Small energy bolt above the gauge
+    for (x, y) in [(18, 9), (17, 10), (16, 11), (17, 11), (18, 11), (17, 12), (16, 13)]:
+        img.putpixel((x, y), CARTOON["E"])
 
-    # Energy bar frame: inner fill area at (35,19) 106x10
-    inset(img, 33, 17, 110, 14, hexc("#2A1414"))
-    for x in range(35, 141):
-        for y in range(19, 29):
-            # empty cells with tick marks every 10 px
-            img.putpixel((x, y), hexc("#3A1C1C") if (x - 35) % 10 else hexc("#4A2626"))
-    # Lightning icon left of the bar
-    for (x, y) in [(28, 18), (27, 19), (26, 20), (25, 21), (26, 21), (27, 21), (28, 21), (27, 22), (26, 23), (25, 24), (26, 24)]:
-        img.putpixel((x, y), hexc("#FFD43B"))
-        img.putpixel((x + 1, y + 1), hexc("#8A6A00")) if img.getpixel((x + 1, y + 1)) == GUI["panel"] else None
+    # Process window behind slots and arrow
+    inset(img, 34, 40, 152, 87, GUI["panel"])
+    for x in range(36, 150):
+        if x % 2 == 0:
+            img.putpixel((x, 66), hexc("#22232a"))
 
-    # Input slot (item at 44,56) and output slots
-    slot(img, 43, 55)
-    big_slot(img, 103, 42)        # primary: item at 108,47 -> frame 107,46 inside the 26px housing
-    slot(img, 107, 68)            # secondary: item at 108,69
-    slot(img, 129, 46)            # bonus: item at 130,47
-    # little labels: wool icon guide in input slot background (faint)
-    for (x, y) in [(48, 60), (49, 59), (50, 59), (51, 60), (52, 61), (51, 62), (49, 62), (48, 61), (53, 62), (47, 63)]:
-        img.putpixel((x, y), hexc("#9C9C9C"))
-    # empty progress arrow at (66,56)
-    img.alpha_composite(arrow_shape(hexc("#8B8B8B"), hexc("#555555")), (66, 56))
-    # gear housing at (76,74) 12x12
-    inset(img, 75, 73, 14, 14, hexc("#7A7F86"))
-    # status lamp housing at (9,87)
-    inset(img, 8, 86, 10, 10, hexc("#2A2A2A"))
+    slot(img, 44, 56)          # input
+    big_slot(img, 108, 47)     # primary output
+    slot(img, 108, 69)         # secondary (string)
+    slot(img, 130, 47)         # bonus
+    # faint wool hint inside the input slot
+    for (x, y) in [(49, 61), (50, 60), (51, 60), (52, 61), (53, 62), (52, 63), (50, 63), (49, 62)]:
+        img.putpixel((x, y), hexc("#3d3f48"))
+    # empty progress arrow
+    img.alpha_composite(arrow_shape(hexc("#2c2e36"), hexc("#17181c")), (66, 56))
+    # gear housing and status lamp housing
+    inset(img, 75, 71, 89, 85, GUI["gauge"])
+    inset(img, 8, 86, 18, 96, GUI["gauge"])
 
-    # Player inventory slots (8, 111) 3x9 and hotbar (8, 169)
+    # Player inventory (8,111) 3x9 and hotbar (8,169)
     for row in range(3):
         for col in range(9):
-            slot(img, 7 + col * 18, 110 + row * 18)
+            slot(img, 8 + col * 18, 111 + row * 18)
     for col in range(9):
-        slot(img, 7 + col * 18, 168)
+        slot(img, 8 + col * 18, 169)
+
+    # Decorations, like the mushroom icons on the Mycelial generator GUI
+    sheep_icon(img, 146, 5, hexc("#f2f2f2"))
+    rnd = random.Random(7)
+    for x in range(4, 172):
+        if rnd.random() < 0.18:
+            img.putpixel((x, 190), rnd.choice([hexc("#e3e1ea"), hexc("#b7b3c6"), hexc("#86c25a")]))
 
     # ---- sprites ----
-    # Energy fill (0,194) 106x10: red->orange->yellow gradient with highlight
-    for x in range(106):
-        t = x / 105.0
-        c = mix(hexc("#C0261B"), hexc("#FF9A1F"), min(1, t * 1.6)) if t < 0.62 else mix(hexc("#FF9A1F"), hexc("#FFE45C"), (t - 0.62) / 0.38)
-        for y in range(10):
-            f = 1.15 if y in (1, 2) else (0.75 if y >= 8 else 1.0)
-            cc = shade(c, f)
-            if (x % 10) == 0:
+    # Energy fill (176,96) 12x64, purple glow, brighter at the top
+    for y in range(64):
+        t = y / 63.0
+        c = mix(hexc("#ff6ae6"), hexc("#5c2aa6"), t)
+        for x in range(12):
+            cc = mix(c, hexc("#ffd2fb"), 0.35) if x in (2, 3) else (shade(c, 0.75) if x >= 10 else c)
+            if y % 6 == 4:
                 cc = shade(cc, 0.85)
-            img.putpixel((x, 194 + y), cc)
-    # Filled arrow (106,194)
-    img.alpha_composite(arrow_shape(hexc("#FFFFFF"), hexc("#555555")), (106, 194))
-    filled = arrow_shape(hexc("#4FC3F7"), hexc("#1F5F80"))
-    img.alpha_composite(filled, (106, 194))
-    # Gear frames (138,194) 4x 12x12
+            img.putpixel((176 + x, 96 + y), cc)
+    # Progress arrow fill (0,194)
+    img.alpha_composite(arrow_shape(hexc("#c27cff"), hexc("#3a1a66")), (0, 194))
+    hl = arrow_shape(hexc("#ffd2fb"), CLEAR)
+    for y in range(16):
+        for x in range(32):
+            if y in (6, 7) and hl.getpixel((x, y))[3] and 2 <= x <= 20:
+                img.putpixel((x, 194 + y), hexc("#ffd2fb"))
+    # Gear frames (138,194) 4x 12x12 in brass
     for f in range(4):
         g = Image.new("RGBA", (12, 12), CLEAR)
-        draw_gear(g, 2, 2, f, hexc("#E8955F"), hexc("#8A4526"))
-        if f % 2:
+        grid(GEAR_POSES[f % 2], CARTOON, g, 2, 2)
+        if f >= 2:
             g = g.transpose(Image.FLIP_LEFT_RIGHT)
         img.alpha_composite(g, (138 + f * 12, 194))
-    # Status lamps (186,194) 6x 8x8 in MachineStatus order
-    lamp_colors = ["#9AA0A6", "#55D66B", "#E8B23A", "#E35D5D", "#E35D5D", "#B04040"]
+    # Status lamps (186,194) 6x 8x8 in MachineStatus order, outlined cartoon bulbs
+    lamp_colors = ["#8d97bc", "#86c25a", "#f2b24a", "#ff4b4b", "#ff4b4b", "#9a52f0"]
+    bulb = ["..OOOO..", ".OHccSO.", "OHHcccSO", "OHccccSO", "OcccccSO", "OccccSSO", ".OSSSSO.", "..OOOO.."]
     for i, col in enumerate(lamp_colors):
-        lx = 186 + i * 8
         base = hexc(col)
-        for y in range(8):
-            for x in range(8):
-                d = ((x - 3.5) ** 2 + (y - 3.5) ** 2) ** 0.5
-                if d <= 3.6:
-                    c = shade(base, 1.0 - d * 0.08)
-                    if d < 1.4:
-                        c = mix(c, hexc("#FFFFFF"), 0.45)
-                    img.putpixel((lx + x, 194 + y), c)
-                elif d <= 4.2:
-                    img.putpixel((lx + x, 194 + y), shade(base, 0.45))
+        pal = {"O": CARTOON["O"], "c": base, "H": mix(base, hexc("#ffffff"), 0.6), "S": shade(base, 0.6)}
+        grid(bulb, pal, img, 186 + i * 8, 194)
 
-    # Redstone mode icons (176,0) 4x 16x16: IGNORED, HIGH, LOW, DISABLED
+    # Redstone mode icons (176,0): IGNORED, HIGH, LOW, DISABLED
     def torch(ox, oy, lit):
         for y in range(7, 14):
-            img.putpixel((ox + 7, oy + y), hexc("#6B4F2A"))
-            img.putpixel((ox + 8, oy + y), hexc("#8A6A3A"))
-        head = hexc("#FF3B2B") if lit else hexc("#5A1A14")
+            img.putpixel((ox + 7, oy + y), hexc("#6b4f2a"))
+            img.putpixel((ox + 8, oy + y), hexc("#8a6a3a"))
+        head = hexc("#ff4b4b") if lit else hexc("#5a1a14")
         for (x, y) in [(7, 4), (8, 4), (6, 5), (7, 5), (8, 5), (9, 5), (7, 6), (8, 6)]:
             img.putpixel((ox + x, oy + y), head)
         if lit:
             for (x, y) in [(7, 3), (5, 5), (10, 5), (7, 2)]:
-                img.putpixel((ox + x, oy + y), hexc("#FFB0A0"))
+                img.putpixel((ox + x, oy + y), hexc("#ffb0a0"))
 
-    # IGNORED: gunpowder-like dust pile (grey) = "always on"
     for (x, y) in [(5, 10), (6, 9), (7, 9), (8, 9), (9, 9), (10, 10), (4, 11), (11, 11), (6, 10), (7, 10), (8, 10), (9, 10)]:
-        img.putpixel((176 + x, y), hexc("#9A9A9A"))
+        img.putpixel((176 + x, y), hexc("#9aa3c4"))
     for (x, y) in [(6, 8), (8, 8), (10, 9)]:
-        img.putpixel((176 + x, y), hexc("#C8C8C8"))
-    torch(192, 0, True)     # HIGH
-    torch(208, 0, False)    # LOW
-    # DISABLED: torch with a red bar
+        img.putpixel((176 + x, y), hexc("#dfe4f5"))
+    torch(192, 0, True)
+    torch(208, 0, False)
     torch(224, 0, False)
     for i in range(3, 13):
-        img.putpixel((224 + i, i), hexc("#E02020"))
-        img.putpixel((224 + i + 1, i), hexc("#E02020")) if i < 12 else None
-    # Button backgrounds (176,64) normal, (192,64) hovered
-    for bx, light in [(176, False), (192, True)]:
-        face = hexc("#A8A8A8") if not light else hexc("#BEC8D8")
+        img.putpixel((224 + i, i), hexc("#ff4b4b"))
+        if i < 12:
+            img.putpixel((224 + i + 1, i), hexc("#ff4b4b"))
+    # Button backgrounds (176,64) normal, (192,64) hovered: small slate panels
+    for bx, face in [(176, hexc("#4b505b")), (192, hexc("#5d6687"))]:
         rect(img, bx, 64, bx + 16, 80, face)
         for i in range(16):
-            img.putpixel((bx + i, 64), GUI["white"])
-            img.putpixel((bx, 64 + i), GUI["white"])
-            img.putpixel((bx + i, 79), GUI["slot_d"])
-            img.putpixel((bx + 15, 64 + i), GUI["slot_d"])
+            img.putpixel((bx + i, 64), GUI["light"] if bx == 176 else hexc("#8d97bc"))
+            img.putpixel((bx, 64 + i), GUI["light"] if bx == 176 else hexc("#8d97bc"))
+            img.putpixel((bx + i, 79), GUI["outline"])
+            img.putpixel((bx + 15, 64 + i), GUI["outline"])
     img.save(out("gui/mechanical_separator.png"))
 
 
@@ -690,10 +706,10 @@ def generate_jei():
     for y in range(40):
         for x in range(8):
             edge = x in (0, 7) or y in (0, 39)
-            img.putpixel((32 + x, 16 + y), hexc("#373737") if edge else hexc("#3A1C1C"))
+            img.putpixel((32 + x, 16 + y), hexc("#17181c") if edge else hexc("#141519"))
             t = y / 39.0
-            c = mix(hexc("#FFE45C"), hexc("#C0261B"), t)
-            img.putpixel((40 + x, 16 + y), hexc("#373737") if edge else shade(c, 1.1 if x in (2, 3) else 1.0))
+            c = mix(hexc("#ff6ae6"), hexc("#5c2aa6"), t)
+            img.putpixel((40 + x, 16 + y), hexc("#17181c") if edge else shade(c, 1.1 if x in (2, 3) else 1.0))
     img.save(out("gui/jei.png"))
 
 
