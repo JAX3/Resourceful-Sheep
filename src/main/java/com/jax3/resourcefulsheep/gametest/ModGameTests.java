@@ -91,6 +91,7 @@ public final class ModGameTests {
         TESTS.put("creative_generator_powers_separator", ModGameTests::creativeGeneratorPowers);
         TESTS.put("generator_creates_valid_definitions", ModGameTests::generatorCreatesDefinitions);
         TESTS.put("generator_dedupe_removes_duplicate_wool", ModGameTests::generatorDedupe);
+        TESTS.put("generator_pick_and_choose", ModGameTests::generatorPickAndChoose);
         TESTS.forEach((name, fn) -> FUNCTIONS.register(name, () -> fn));
     }
 
@@ -522,6 +523,44 @@ public final class ModGameTests {
             }
         } catch (java.io.IOException e) {
             h.fail("file handling failed: " + e);
+        }
+        h.succeed();
+    }
+
+    private static void generatorPickAndChoose(GameTestHelper h) {
+        var registries = h.getLevel().registryAccess();
+        var gen = com.jax3.resourcefulsheep.command.ResourceGenerator.class;
+        var materials = com.jax3.resourcefulsheep.command.ResourceGenerator.storageMaterials(registries);
+        h.assertTrue(materials.contains("slime") && !materials.contains("raw_iron"), "material suggestions: " + materials);
+        h.assertTrue(com.jax3.resourcefulsheep.command.ResourceGenerator.forMaterial(registries, "not_a_material").isEmpty(), "unknown material rejected");
+
+        var slime = com.jax3.resourcefulsheep.command.ResourceGenerator.forMaterial(registries, "slime").orElseThrow();
+        h.assertTrue(slime.feeding().equals("#c:storage_blocks/slime") && slime.uses() == 9, "slime material: " + slime.feeding() + " x" + slime.uses());
+
+        // Any item: amethyst block is not a c:storage_blocks entry, so it is fed directly and defaults to 1 use.
+        var amethyst = com.jax3.resourcefulsheep.command.ResourceGenerator.forItem(registries, Items.AMETHYST_BLOCK);
+        h.assertTrue(amethyst.name().equals("amethyst") && amethyst.feeding().equals("minecraft:amethyst_block"), "amethyst: " + amethyst.name() + " " + amethyst.feeding());
+        h.assertTrue(amethyst.output() == Items.AMETHYST_SHARD && amethyst.uses() == 1, "amethyst -> shard x1, got " + amethyst.output() + " x" + amethyst.uses());
+        h.assertTrue(com.jax3.resourcefulsheep.command.ResourceGenerator.coveredBy(registries, SheepResourceRegistry.server(), amethyst).isEmpty(), "amethyst is new");
+
+        // A storage block picked by item uses the whole tag; iron is already covered by the built-in definition.
+        var iron = com.jax3.resourcefulsheep.command.ResourceGenerator.forItem(registries, Items.IRON_BLOCK);
+        h.assertTrue(iron.feeding().equals("#c:storage_blocks/iron"), "iron block uses the storage tag: " + iron.feeding());
+        h.assertTrue(com.jax3.resourcefulsheep.command.ResourceGenerator.coveredBy(registries, SheepResourceRegistry.server(), iron)
+                .map(r -> r.id().equals(IRON)).orElse(false), "iron already covered by the built-in");
+
+        var ops = registries.createSerializationContext(JsonOps.INSTANCE);
+        h.assertTrue(SheepResource.DEFINITION_CODEC.parse(ops, amethyst.json()).error().isEmpty(), "amethyst JSON parses");
+        // writeOne adds a file without removing the others.
+        try {
+            java.nio.file.Path tmp = java.nio.file.Files.createTempDirectory("rs-pick");
+            java.nio.file.Path pack = com.jax3.resourcefulsheep.command.ResourceGenerator.write(tmp, List.of(slime));
+            com.jax3.resourcefulsheep.command.ResourceGenerator.writeOne(tmp, amethyst);
+            try (var files = java.nio.file.Files.list(pack.resolve("data/resourcefulsheep_generated/resourcefulsheep/sheep_resources"))) {
+                h.assertTrue(files.count() == 2, "writeOne keeps existing files");
+            }
+        } catch (java.io.IOException e) {
+            h.fail("write failed: " + e);
         }
         h.succeed();
     }

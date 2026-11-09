@@ -83,8 +83,16 @@ public final class DevScreenshotHarness {
         mc.gui.toastManager().clear();
         switch (tick) {
             case 60 -> server.execute(() -> setupScene(server));
-            case 90 -> command(server, "resourcefulsheep generate all");
-            case 140 -> command(server, "resourcefulsheep generate dedupe");
+            case 90 -> command(server, "resourcefulsheep generate material slime");
+            case 110 -> command(server, "resourcefulsheep generate item minecraft:amethyst_block");
+            case 130 -> command(server, "resourcefulsheep generate item minecraft:iron_block");
+            case 140 -> command(server, "resourcefulsheep generate item minecraft:emerald_block");
+            case 150 -> server.execute(() -> {
+                ServerPlayer p = server.getPlayerList().getPlayers().getFirst();
+                p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.HONEY_BLOCK));
+                server.getCommands().performPrefixedCommand(p.createCommandSourceStack(), "resourcefulsheep generate hand");
+            });
+            case 175 -> command(server, "resourcefulsheep generate remove slime");
             case 190 -> setHudHidden(mc, true);
             case 200 -> shot(mc, "01_world_sheep");
             case 210 -> server.execute(() -> look(server, 180, 28));

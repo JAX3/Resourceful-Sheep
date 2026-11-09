@@ -243,6 +243,10 @@ You don't have to write a definition for every metal by hand. In a world with ch
 | `/resourcefulsheep preview` | Lists what would be generated, without changing anything |
 | `/resourcefulsheep generate` | Creates a resource for every material that doesn't have one yet, saves them into the world data pack `resourcefulsheep_generated`, and reloads |
 | `/resourcefulsheep generate all` | Same, but also regenerates materials that already have a definition |
+| `/resourcefulsheep generate material <material>` | Adds just one material from the storage-block tags. Press Tab to pick one (`slime`, `tin`, `osmium`...) |
+| `/resourcefulsheep generate item <item>` | Adds a wool type fed with **any** item you choose, e.g. `minecraft:amethyst_block`. If the item is a storage block, its whole `c:storage_blocks` tag is used. |
+| `/resourcefulsheep generate hand` | Same as `item`, using the item in your main hand |
+| `/resourcefulsheep generate remove <name>` | Deletes one generated wool type (press Tab to list them) |
 | `/resourcefulsheep generate dedupe` | Deletes generated wool types that duplicate another one, then reloads. A duplicate has the same feeding block or the same name as another type, for example a generated Iron next to the built-in Iron after `generate all`. Built-in and hand-written definitions are never removed. Of two generated duplicates, the first by id is kept. |
 | `/resourcefulsheep list` | Lists every loaded resource |
 
@@ -252,6 +256,8 @@ How the generator chooses each value:
 - **Output:** the first item in `c:raw_materials/`, `c:ingots/`, `c:gems/` or `c:dusts/<material>`. If none exist, it uses an item named after the material (for example `slime_ball` or `resin_clump`), and failing that, the block itself.
 - **Uses:** 9 when a block is broken down into one of those units (a block holds 9), otherwise 1.
 - **Colours:** taken from the block's map colour. The category comes from whichever tag supplied the output.
+
+Picking single items or materials adds one file without touching the others. It refuses anything an existing built-in or hand-written resource already covers (same feeding item or same name), so you can't create duplicates this way. A wool type made from an arbitrary item (not a storage block) lasts **1** shearing by default, because the mod can't know how many units the item holds. Edit `infusion_uses` in its JSON if you want more.
 
 Generated files are ordinary JSON in `<world>/datapacks/resourcefulsheep_generated/`. You can edit them freely, but re-running `generate` overwrites that folder. In plain vanilla this adds Bone Meal, Dried Kelp, Resin, Slime and Wheat.
 
