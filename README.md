@@ -44,9 +44,9 @@ Put the wool into a **Mechanical Separator** and supply Forge Energy (FE).
 | Input | 1 Iron Wool |
 | Energy | 20,000 FE (200 FE/t) |
 | Time | 100 ticks (5 s) |
-| Output | 1 Raw Iron + 2 String (+10% chance of 3 Iron Nuggets) |
+| Output | **2–4** Raw Iron (random each time) + 2 String (+10% chance of 3 Iron Nuggets) |
 
-**Balance:** with the defaults, one Iron Block gives 9 Raw Iron in total and one Diamond gives 1 Diamond. What you gain is **string**, automation, and access to ore-processing chains. Pack makers can turn it into a generator with the config multipliers.
+**Balance:** every wool separates into **2–4** of its resource (3 on average). One Iron Block (9 shearings) therefore yields about 27 Raw Iron, and one Diamond about 3 Diamonds, so infused sheep **multiply** resources. The cost is the shearing time and the machine's energy. To tone it down, lower `primaryOutputMultiplier` (e.g. `0.34` brings it back to about 1 per wool), lower `infusionUsesMultiplier`, or set `primary_count` per resource.
 
 ### Crafting the separator
 ```
@@ -67,20 +67,20 @@ A creative-only block, found in the Resourceful Sheep creative tab. It has no re
 
 ### Built-in resources
 
-| Fed item | Wool | Separator output | Uses | FE / time |
+| Fed item | Wool | Separator output (per wool) | Uses | FE / time |
 |---|---|---|---|---|
-| Iron Block | Iron Wool | Raw Iron | 9 | 20,000 / 5 s |
-| Gold Block | Gold Wool | Raw Gold | 9 | 20,000 / 5 s |
-| Copper Block | Copper Wool | Raw Copper | 9 | 16,000 / 5 s |
-| Diamond | Diamond Wool | Diamond | 1 | 40,000 / 8 s |
-| Emerald | Emerald Wool | Emerald | 1 | 40,000 / 8 s |
-| Redstone Block | Redstone Wool | Redstone Dust | 9 | 12,000 / 4 s |
-| Lapis Lazuli Block | Lapis Wool | Lapis Lazuli | 9 | 12,000 / 4 s |
-| Coal Block | Coal Wool | Coal | 9 | 8,000 / 4 s |
-| Netherite Scrap | Netherite Wool | Netherite Scrap | 1 | 80,000 / 10 s |
-| Cobblestone | Stone Wool | Cobblestone | 1 | 4,000 / 2 s |
-| Oak Log | Wood Wool | Oak Log | 1 | 4,000 / 2 s |
-| Quartz | Quartz Wool | Nether Quartz | 1 | 16,000 / 5 s |
+| Iron Block | Iron Wool | 2–4 Raw Iron | 9 | 20,000 / 5 s |
+| Gold Block | Gold Wool | 2–4 Raw Gold | 9 | 20,000 / 5 s |
+| Copper Block | Copper Wool | 2–4 Raw Copper | 9 | 16,000 / 5 s |
+| Diamond | Diamond Wool | 2–4 Diamond | 1 | 40,000 / 8 s |
+| Emerald | Emerald Wool | 2–4 Emerald | 1 | 40,000 / 8 s |
+| Redstone Block | Redstone Wool | 2–4 Redstone Dust | 9 | 12,000 / 4 s |
+| Lapis Lazuli Block | Lapis Wool | 2–4 Lapis Lazuli | 9 | 12,000 / 4 s |
+| Coal Block | Coal Wool | 2–4 Coal | 9 | 8,000 / 4 s |
+| Netherite Scrap | Netherite Wool | 2–4 Netherite Scrap | 1 | 80,000 / 10 s |
+| Cobblestone | Stone Wool | 2–4 Cobblestone | 1 | 4,000 / 2 s |
+| Oak Log | Wood Wool | 2–4 Oak Log | 1 | 4,000 / 2 s |
+| Quartz | Quartz Wool | 2–4 Nether Quartz | 1 | 16,000 / 5 s |
 
 Every resource also gives 2 String. Plain wool (`#minecraft:wool`) can be separated into 3 string through the bundled `resourcefulsheep:separating` recipe.
 
@@ -218,7 +218,7 @@ Definitions live in `data/<namespace>/resourcefulsheep/sheep_resources/<name>.js
   "infusion_uses": 9,                        // shearings per feeding
   "separator": {
     "primary_output": "mekanism:raw_tin",    // item id or {"id": ..., "count": ..., "components": {...}}; default: the fed item
-    "primary_count": 1,
+    "primary_count": { "min": 2, "max": 4 }, // random 2-4 per wool; a plain number means a fixed count
     "secondary_output": "minecraft:string",  // default string
     "secondary_count": 2,                    // default: config defaultStringOutput (0 = none)
     "bonus_output": { "item": "mekanism:nugget_tin", "chance": 0.1 },

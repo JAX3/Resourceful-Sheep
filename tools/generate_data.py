@@ -57,7 +57,7 @@ def resource_definitions():
     for name, r in RESOURCES.items():
         sep = {
             "primary_output": r["out"],
-            "primary_count": 1,
+            "primary_count": {"min": 2, "max": 4},
             "secondary_output": "minecraft:string",
             "secondary_count": 2,
             "energy_cost": r["energy"],
@@ -221,6 +221,7 @@ def lang():
         "jei.resourcefulsheep.time": "Time: %s seconds",
         "jei.resourcefulsheep.chance": "%s%% chance",
         "jei.resourcefulsheep.average": "Average: %s",
+        "jei.resourcefulsheep.range": "Produces %s per wool (average %s)",
         "jei.resourcefulsheep.info.resource_wool": "Right-click an adult sheep with a resource (see Resource Infusion) to infuse it. Shearing an infused sheep drops this wool, which a powered Mechanical Separator turns back into the resource plus string.",
         "jei.resourcefulsheep.info.separator": "Separates resource wool into its resource and string using Forge Energy (FE). Hoppers and pipes insert from the top and sides and extract from the bottom by default; outputs are pushed into an inventory below. Configure sides and costs in the server config.",
         "command.resourcefulsheep.preview.none": "Every material in c:storage_blocks tags already has a sheep resource.",

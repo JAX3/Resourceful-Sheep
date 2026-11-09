@@ -13,7 +13,7 @@ Environment:
 ## Unit tests ✅ (`./gradlew test`): 5/5 passed
 Relative side mapping for every facing, side-name parsing, redstone modes, infusion countdown and cooldown, and permanent infusions.
 
-## In-world game tests ✅ (`./gradlew runGameTestServer`): all 23 required tests passed
+## In-world game tests ✅ (`./gradlew runGameTestServer`): all 24 required tests passed
 These run on a **dedicated-server** game test server, which also confirms the mod loads with no client classes present.
 
 | Test | Verifies |
@@ -39,6 +39,7 @@ These run on a **dedicated-server** game test server, which also confirms the mo
 | `generator_creates_valid_definitions` | `/resourcefulsheep generate` logic: discovers slime, wheat and bone meal; skips already-defined iron, diamond and netherite and the raw ore blocks; slime block → 9 slime balls. Every generated JSON parses through the real codec, and writing produces one file per resource plus `pack.mcmeta`. |
 | `generator_dedupe_removes_duplicate_wool` | After `generate all`: iron, gold, copper, redstone, lapis, coal, diamond, emerald and netherite are flagged as duplicates. Slime, wheat and bone meal are kept, and built-ins are never flagged. Only the duplicate files are deleted. |
 | `generator_pick_and_choose` | Material suggestions list slime but not raw ore blocks. An unknown material is rejected. `material slime` uses the storage tag ×9. `item amethyst_block` is fed directly, gives amethyst shard ×1 and parses. `item iron_block` uses the iron tag and is reported as already covered by the built-in. `writeOne` keeps the existing files. |
+| `separator_output_rolls_two_to_four` | Every resource's separator output is labelled 2-4 and the machine reserves room for 4. 1,000 rolls per resource stay within 2-4 and produce all of 2, 3 and 4. A plain number still means a fixed count, and min > max is rejected. |
 | `custom_definition_with_tag_parses` | A definition using a `#c:storage_blocks/iron` tag, a display name, hex and `[r,g,b]` colours and a custom separator block parses and behaves correctly. Missing items are reported as errors. |
 
 ## Real client run ✅ (`./gradlew runClient -PscreenshotHarness`)

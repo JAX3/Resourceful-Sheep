@@ -92,6 +92,7 @@ public final class ModGameTests {
         TESTS.put("generator_creates_valid_definitions", ModGameTests::generatorCreatesDefinitions);
         TESTS.put("generator_dedupe_removes_duplicate_wool", ModGameTests::generatorDedupe);
         TESTS.put("generator_pick_and_choose", ModGameTests::generatorPickAndChoose);
+        TESTS.put("separator_output_rolls_two_to_four", ModGameTests::outputRange);
         TESTS.forEach((name, fn) -> FUNCTIONS.register(name, () -> fn));
     }
 
@@ -168,7 +169,8 @@ public final class ModGameTests {
                 && reg.byFeedingItem(new ItemStack(Items.IRON_BLOCK)).get().id().equals(IRON), "iron block should map to iron");
         h.assertTrue(reg.byFeedingItem(new ItemStack(Items.IRON_INGOT)).isEmpty(), "iron ingot must not be a feeding item by default");
         Separation iron = reg.byId(IRON).get().separation();
-        h.assertTrue(iron.primary().create().is(Items.RAW_IRON) && iron.primary().count() == 1, "iron separates to 1 raw iron");
+        h.assertTrue(iron.primary().create().is(Items.RAW_IRON) && iron.primaryRange().equals(new com.jax3.resourcefulsheep.resource.CountRange(2, 4)),
+                "iron separates to 2-4 raw iron, got " + iron.primaryRange());
         h.assertTrue(iron.secondary().isPresent() && iron.secondary().get().create().is(Items.STRING) && iron.secondary().get().count() == 2, "iron gives 2 string");
         h.assertTrue(iron.effectiveEnergy() == 20000 && iron.effectiveTicks() == 100, "iron costs 20,000 FE over 100 ticks, got " + iron.effectiveEnergy() + "/" + iron.effectiveTicks());
         h.succeed();
@@ -280,7 +282,8 @@ public final class ModGameTests {
         h.assertTrue(insertEnergy(be.getEnergy(), 100_000) == 100_000, "machine should accept 100,000 FE");
         be.getInventory().setStack(SeparatorInventory.INPUT, ResourceWoolItem.create(IRON, 1));
         h.succeedWhen(() -> {
-            h.assertTrue(be.getInventory().getStack(SeparatorInventory.PRIMARY).is(Items.RAW_IRON), "raw iron expected");
+            ItemStack raw = be.getInventory().getStack(SeparatorInventory.PRIMARY);
+            h.assertTrue(raw.is(Items.RAW_IRON) && raw.getCount() >= 2 && raw.getCount() <= 4, "2-4 raw iron expected, got " + raw);
             h.assertTrue(be.getInventory().getStack(SeparatorInventory.SECONDARY).is(Items.STRING)
                     && be.getInventory().getStack(SeparatorInventory.SECONDARY).getCount() == 2, "2 string expected");
             h.assertTrue(be.getInventory().getStack(SeparatorInventory.INPUT).isEmpty(), "input consumed");
@@ -355,7 +358,7 @@ public final class ModGameTests {
                 if (s.is(Items.COAL)) coal += s.getCount();
                 if (s.is(Items.STRING)) string += s.getCount();
             }
-            h.assertTrue(coal == 2 && string == 4, "chest should receive 2 coal and 4 string, has " + coal + "/" + string);
+            h.assertTrue(coal >= 4 && coal <= 8 && string == 4, "chest should receive 4-8 coal (2-4 per wool) and 4 string, has " + coal + "/" + string);
         });
     }
 
@@ -562,6 +565,29 @@ public final class ModGameTests {
         } catch (java.io.IOException e) {
             h.fail("write failed: " + e);
         }
+        h.succeed();
+    }
+
+    private static void outputRange(GameTestHelper h) {
+        java.util.Set<Integer> seen = new java.util.TreeSet<>();
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(42);
+        for (SheepResource r : SheepResourceRegistry.server().all()) {
+            Separation s = r.separation();
+            h.assertTrue(s.primaryLabel().equals("2-4"), r.id() + " should output 2-4, label " + s.primaryLabel());
+            h.assertTrue(s.maxPrimaryCount() == 4, r.id() + " machine reserves room for 4");
+            for (int i = 0; i < 1000; i++) {
+                int n = s.rollPrimaryCount(random);
+                h.assertTrue(n >= 2 && n <= 4, r.id() + " rolled " + n);
+                seen.add(n);
+            }
+        }
+        h.assertTrue(seen.equals(java.util.Set.of(2, 3, 4)), "all of 2, 3 and 4 occur: " + seen);
+        // Plain numbers still work and mean a fixed count.
+        var ops = h.getLevel().registryAccess().createSerializationContext(JsonOps.INSTANCE);
+        var fixed = com.jax3.resourcefulsheep.resource.CountRange.CODEC.parse(ops, new com.google.gson.JsonPrimitive(3)).getOrThrow();
+        h.assertTrue(fixed.isFixed() && fixed.min() == 3, "plain number = fixed count");
+        h.assertTrue(com.jax3.resourcefulsheep.resource.CountRange.CODEC.parse(ops, JsonParser.parseString("{\"min\":5,\"max\":2}")).error().isPresent(),
+                "min > max rejected");
         h.succeed();
     }
 }

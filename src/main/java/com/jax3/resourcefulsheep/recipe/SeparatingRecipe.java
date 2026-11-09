@@ -86,7 +86,7 @@ public final class SeparatingRecipe implements Recipe<SingleRecipeInput> {
     public Optional<Integer> processingTicks() { return processingTicks; }
 
     public Separation toSeparation() {
-        return new Separation(primary, secondary, bonus, energyCost, processingTicks);
+        return new Separation(primary, primary.count(), secondary, bonus, energyCost, processingTicks);
     }
 
     @Override

@@ -74,7 +74,7 @@ public class ResourceWoolItem extends Item {
             Separation s = r.separation();
             builder.accept(Component.translatable("tooltip.resourcefulsheep.wool.separates_into").withStyle(ChatFormatting.GRAY));
             builder.accept(Component.literal("  ").append(Component.translatable("tooltip.resourcefulsheep.output_line",
-                    s.primary().count(), s.primary().create().getHoverName())).withStyle(ChatFormatting.DARK_AQUA));
+                    s.primaryLabel(), s.primary().create().getHoverName())).withStyle(ChatFormatting.DARK_AQUA));
             s.secondary().ifPresent(sec -> builder.accept(Component.literal("  ").append(Component.translatable("tooltip.resourcefulsheep.output_line",
                     sec.count(), sec.create().getHoverName())).withStyle(ChatFormatting.DARK_AQUA)));
             s.bonus().ifPresent(b -> builder.accept(Component.literal("  ").append(Component.translatable("tooltip.resourcefulsheep.chance_line",

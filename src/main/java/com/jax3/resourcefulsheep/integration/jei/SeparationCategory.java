@@ -45,13 +45,17 @@ public class SeparationCategory extends AbstractRecipeCategory<SeparationDisplay
                 .addItemStacks(recipe.inputs());
 
         double expected = s.expectedPrimaryCount();
+        // Cycle through every possible count (e.g. 2, 3, 4) so the slot itself shows the range.
+        java.util.List<net.minecraft.world.item.ItemStack> counts = new java.util.ArrayList<>();
+        String[] bounds = s.primaryLabel().split("-");
+        int lo = Integer.parseInt(bounds[0]), hi = Integer.parseInt(bounds[bounds.length - 1]);
+        for (int n = Math.max(1, lo); n <= Math.max(1, hi); n++) counts.add(s.primary().create().copyWithCount(n));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 82, 3)
                 .setOutputSlotBackground()
-                .add(s.primary().withCount(Math.max(1, (int) Math.floor(expected))))
+                .addItemStacks(counts)
                 .addRichTooltipCallback((view, tooltip) -> {
-                    if (expected != Math.floor(expected)) {
-                        tooltip.add(Component.translatable("jei.resourcefulsheep.average", String.format(Locale.ROOT, "%.2f", expected)).withStyle(ChatFormatting.GRAY));
-                    }
+                    tooltip.add(Component.translatable("jei.resourcefulsheep.range", s.primaryLabel(),
+                            String.format(Locale.ROOT, "%.1f", expected)).withStyle(ChatFormatting.GRAY));
                 });
         s.secondary().ifPresent(sec -> builder.addSlot(RecipeIngredientRole.OUTPUT, 82, 25)
                 .setStandardSlotBackground()

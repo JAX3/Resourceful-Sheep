@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStackTemplate;
  */
 public record Separation(
         ItemStackTemplate primary,
+        int primaryMax,
         Optional<ItemStackTemplate> secondary,
         Optional<ChanceOutput> bonus,
         Optional<Integer> energyCost,
@@ -40,13 +41,46 @@ public record Separation(
         return (long) energyPerTick() * effectiveTicks();
     }
 
+    /** Smallest primary count before the global multiplier (the count stored in {@link #primary}). */
+    public int primaryMin() {
+        return primary.count();
+    }
+
+    /** The configured primary count range before the global multiplier, e.g. 2-4. */
+    public CountRange primaryRange() {
+        return new CountRange(primaryMin(), Math.max(primaryMin(), primaryMax));
+    }
+
     /** Average primary output count after the global multiplier (shown in JEI and tooltips). */
     public double expectedPrimaryCount() {
-        return primary.count() * ModConfigs.getDouble(ModConfigs.SERVER.primaryOutputMultiplier);
+        return (primaryMin() + Math.max(primaryMin(), primaryMax)) / 2.0 * ModConfigs.getDouble(ModConfigs.SERVER.primaryOutputMultiplier);
     }
 
     /** Maximum number of primary items one operation can produce (used for output-space checks). */
     public int maxPrimaryCount() {
-        return Mth.ceil(expectedPrimaryCount()) + (ModConfigs.getDouble(ModConfigs.SERVER.bonusPrimaryChance) > 0 ? 1 : 0);
+        double scaled = Math.max(primaryMin(), primaryMax) * ModConfigs.getDouble(ModConfigs.SERVER.primaryOutputMultiplier);
+        return Mth.ceil(scaled) + (ModConfigs.getDouble(ModConfigs.SERVER.bonusPrimaryChance) > 0 ? 1 : 0);
+    }
+
+    /**
+     * Rolls one operation's primary count: uniform in the range, then the global multiplier (fractions become a
+     * chance of one more), then the global bonus chance. Never exceeds {@link #maxPrimaryCount()}.
+     */
+    public int rollPrimaryCount(net.minecraft.util.RandomSource random) {
+        CountRange range = primaryRange();
+        int base = range.min() + random.nextInt(range.max() - range.min() + 1);
+        double scaled = base * ModConfigs.getDouble(ModConfigs.SERVER.primaryOutputMultiplier);
+        int count = Mth.floor(scaled);
+        if (random.nextDouble() < scaled - count) count++;
+        if (random.nextDouble() < ModConfigs.getDouble(ModConfigs.SERVER.bonusPrimaryChance)) count++;
+        return Math.min(count, maxPrimaryCount());
+    }
+
+    /** Range label after the multiplier, e.g. "2-4" (or "3" when fixed). */
+    public String primaryLabel() {
+        double mult = ModConfigs.getDouble(ModConfigs.SERVER.primaryOutputMultiplier);
+        CountRange r = primaryRange();
+        int lo = Mth.floor(r.min() * mult), hi = Mth.ceil(r.max() * mult);
+        return lo == hi ? Integer.toString(lo) : lo + "-" + hi;
     }
 }

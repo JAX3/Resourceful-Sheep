@@ -8,7 +8,10 @@
   "infusion_uses": 9,
   "separator": {
     "primary_output": "minecraft:raw_copper",
-    "primary_count": 1,
+    "primary_count": {
+      "min": 2,
+      "max": 4
+    },
     "secondary_output": "minecraft:string",
     "secondary_count": 2,
     "energy_cost": 16000,

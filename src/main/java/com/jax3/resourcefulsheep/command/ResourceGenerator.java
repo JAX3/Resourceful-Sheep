@@ -189,7 +189,10 @@ public final class ResourceGenerator {
         json.addProperty("infusion_uses", uses);
         JsonObject sep = new JsonObject();
         sep.addProperty("primary_output", BuiltInRegistries.ITEM.getKey(output).toString());
-        sep.addProperty("primary_count", 1);
+        JsonObject count = new JsonObject();
+        count.addProperty("min", 2);
+        count.addProperty("max", 4);
+        sep.add("primary_count", count);
         sep.addProperty("secondary_output", "minecraft:string");
         sep.addProperty("secondary_count", 2);
         json.add("separator", sep);

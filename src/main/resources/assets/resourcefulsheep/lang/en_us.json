@@ -69,6 +69,7 @@
   "jei.resourcefulsheep.info.separator": "Separates resource wool into its resource and string using Forge Energy (FE). Hoppers and pipes insert from the top and sides and extract from the bottom by default; outputs are pushed into an inventory below. Configure sides and costs in the server config.",
   "jei.resourcefulsheep.mechanical_separation": "Mechanical Separation",
   "jei.resourcefulsheep.per_shearing": "Dropped per shearing: %s",
+  "jei.resourcefulsheep.range": "Produces %s per wool (average %s)",
   "jei.resourcefulsheep.resource_infusion": "Resource Infusion",
   "jei.resourcefulsheep.time": "Time: %s seconds",
   "jei.resourcefulsheep.uses": "Lasts %s shearing(s)",

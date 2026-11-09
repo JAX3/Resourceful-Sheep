@@ -9,10 +9,7 @@
   "wool_drop_count": 1,
   "infusion_uses": 4,
   "separator": {
-    "primary_output": {
-      "id": "minecraft:amethyst_shard",
-      "count": 1
-    },
+    "primary_output": "minecraft:amethyst_shard",
     "secondary_output": "minecraft:string",
     "secondary_count": 1,
     "bonus_output": {
@@ -23,6 +20,10 @@
       "chance": 0.25
     },
     "energy_cost": 10000,
-    "processing_ticks": 60
+    "processing_ticks": 60,
+    "primary_count": {
+      "min": 2,
+      "max": 4
+    }
   }
 }

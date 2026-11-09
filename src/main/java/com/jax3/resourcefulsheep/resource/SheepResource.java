@@ -148,9 +148,9 @@ public record SheepResource(
     public Separation separation() {
         ItemStackTemplate primary = separator.primaryOutput().orElseGet(() -> feedingItem.items().findFirst()
                 .map(ItemStackTemplate::new).orElse(new ItemStackTemplate(Items.STRING)));
-        int primaryCount = separator.primaryCount().orElse(primary.count());
+        CountRange primaryCount = separator.primaryCount().orElse(CountRange.exactly(primary.count()));
         int secondaryCount = separator.secondaryCount().orElseGet(() -> ModConfigs.getInt(ModConfigs.SERVER.defaultStringOutput));
-        return new Separation(primary.withCount(Math.max(1, primaryCount)),
+        return new Separation(primary.withCount(Math.max(1, primaryCount.min())), primaryCount.max(),
                 secondaryCount > 0 ? Optional.of(separator.secondaryOutput().withCount(secondaryCount)) : Optional.empty(),
                 separator.bonusOutput(), separator.energyCost(), separator.processingTicks());
     }
@@ -193,7 +193,7 @@ public record SheepResource(
      * Separator settings for a resource.
      *
      * @param primaryOutput   extracted material; defaults to the first feeding item
-     * @param primaryCount    overrides the count inside {@code primaryOutput}
+     * @param primaryCount    overrides the count inside {@code primaryOutput}; a number or {@code {"min": 2, "max": 4}}
      * @param secondaryOutput byproduct, string by default
      * @param secondaryCount  byproduct count; defaults to the {@code defaultStringOutput} config value
      * @param bonusOutput     optional chance-based extra output
@@ -202,7 +202,7 @@ public record SheepResource(
      */
     public record Separator(
             Optional<ItemStackTemplate> primaryOutput,
-            Optional<Integer> primaryCount,
+            Optional<CountRange> primaryCount,
             ItemStackTemplate secondaryOutput,
             Optional<Integer> secondaryCount,
             Optional<ChanceOutput> bonusOutput,
@@ -214,7 +214,7 @@ public record SheepResource(
 
         public static final Codec<Separator> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ItemStackTemplate.CODEC.optionalFieldOf("primary_output").forGetter(Separator::primaryOutput),
-                ExtraCodecs.intRange(1, 99).optionalFieldOf("primary_count").forGetter(Separator::primaryCount),
+                CountRange.CODEC.optionalFieldOf("primary_count").forGetter(Separator::primaryCount),
                 ItemStackTemplate.CODEC.optionalFieldOf("secondary_output", new ItemStackTemplate(Items.STRING)).forGetter(Separator::secondaryOutput),
                 ExtraCodecs.intRange(0, 99).optionalFieldOf("secondary_count").forGetter(Separator::secondaryCount),
                 ChanceOutput.CODEC.optionalFieldOf("bonus_output").forGetter(Separator::bonusOutput),

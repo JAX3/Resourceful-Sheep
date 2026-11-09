@@ -185,10 +185,7 @@ public class MechanicalSeparatorBlockEntity extends BlockEntity implements MenuP
     }
 
     private void finish(Separation sep, RandomSource random) {
-        double expected = sep.expectedPrimaryCount();
-        int primaryCount = Mth.floor(expected);
-        if (random.nextDouble() < expected - primaryCount) primaryCount++;
-        if (random.nextDouble() < ModConfigs.getDouble(ModConfigs.SERVER.bonusPrimaryChance)) primaryCount++;
+        int primaryCount = sep.rollPrimaryCount(random);
         // outputsFit() guaranteed room for maxPrimaryCount, which is an upper bound of primaryCount.
         if (primaryCount > 0) inventory.addOutput(SeparatorInventory.PRIMARY, sep.primary().create().copyWithCount(primaryCount));
         sep.secondary().ifPresent(s -> inventory.addOutput(SeparatorInventory.SECONDARY, s.create()));
