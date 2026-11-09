@@ -128,12 +128,22 @@ public final class DevScreenshotHarness {
                         String.format(java.util.Locale.ROOT, "tp @a %d %d %d 200 22", origin.getX() - 1, origin.getY() + 1, origin.getZ() - 2)));
             }
             case 500 -> { setHudHidden(mc, true); shot(mc, "07_sheep_closeup"); }
-            case 505 -> {
+            case 502 -> {
+                setHudHidden(mc, false);
+                // Look at the diamond sheep (Jade shows its infusion).
+                server.execute(() -> server.getCommands().performPrefixedCommand(server.createCommandSourceStack(),
+                        String.format(java.util.Locale.ROOT, "tp @a %d.5 %d %d.5 180 30", origin.getX(), origin.getY(), origin.getZ() - 3)));
+            }
+            case 520 -> shot(mc, "09_jade_sheep");
+            case 525 -> server.execute(() -> server.getCommands().performPrefixedCommand(server.createCommandSourceStack(),
+                    String.format(java.util.Locale.ROOT, "tp @a %d.5 %d %d.5 180 25", origin.getX() + 2, origin.getY(), origin.getZ() - 6)));
+            case 545 -> shot(mc, "10_jade_separator");
+            case 550 -> {
                 setHudHidden(mc, false);
                 mc.gui.setScreen(net.neoforged.neoforge.client.gui.modlist.ModListScreen.create(null));
             }
-            case 535 -> shot(mc, "08_mod_list");
-            case 545 -> {
+            case 560 -> shot(mc, "08_mod_list");
+            case 570 -> {
                 ResourcefulSheep.LOGGER.warn("Screenshot harness finished; client definitions loaded: {}", SheepResourceRegistry.client().size());
                 mc.stop();
             }

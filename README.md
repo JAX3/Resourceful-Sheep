@@ -10,6 +10,7 @@ The mod is data-driven: resource definitions are reloadable JSON, gameplay numbe
 | NeoForge | 26.3.0.101 or newer |
 | Java | 25 |
 | JEI (optional) | 31.17.0.109 or newer for 26.3 |
+| Jade (optional) | 26.3.5 or newer for NeoForge 26.3 |
 
 ![Infused sheep](docs/screenshots/01_world_sheep.png)
 
@@ -99,6 +100,17 @@ Every resource also gives 2 String. Plain wool (`#minecraft:wool`) can be separa
 - **Comparator:** reads how full the input slot is.
 
 ---
+
+## Jade (optional)
+With [Jade](https://www.curseforge.com/minecraft/mc-mods/jade) installed (26.3.x for NeoForge), looking at things shows:
+- **Infused sheep:** the resource (in its colour) and how many shearings are left. A permanent infusion or a resting cooldown is shown instead when that applies.
+- **Mechanical Separator:** its status (Processing, No Energy, Output Full...), the FE/t it is using, a non-default redstone mode, and a live progress bar. The energy bar and slot contents come from Jade's built-in support.
+
+Each part can be switched off in Jade's settings under *Plugins → Resourceful Sheep*. Jade is optional: the mod runs fine without it.
+
+| Sheep | Mechanical Separator |
+|---|---|
+| ![Jade sheep](docs/screenshots/09_jade_sheep.png) | ![Jade separator](docs/screenshots/10_jade_separator.png) |
 
 ## Installation
 1. Install NeoForge 26.3.0.101+ for Minecraft 26.3.

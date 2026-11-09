@@ -31,6 +31,14 @@ Feed sheep blocks, ingots and gems to infuse their wool, shear them for resource
     ordering="NONE"
     side="BOTH"
 
+# Optional: block/entity info overlay. The mod works without Jade.
+[[dependencies.${mod_id}]]
+    modId="jade"
+    type="optional"
+    versionRange="[26.3,)"
+    ordering="NONE"
+    side="BOTH"
+
 # Optional: recipe viewer integration. The mod works without JEI.
 [[dependencies.${mod_id}]]
     modId="jei"

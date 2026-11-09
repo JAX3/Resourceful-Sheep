@@ -253,6 +253,16 @@ public class MechanicalSeparatorBlockEntity extends BlockEntity implements MenuP
         return progress;
     }
 
+    /** Ticks the current operation takes (0 when idle). */
+    public int getMaxProgress() {
+        return maxProgress;
+    }
+
+    /** FE drawn per processing tick for the current input (0 when idle). */
+    public int getEnergyPerTick() {
+        return energyPerTick;
+    }
+
     public RedstoneMode getRedstoneMode() {
         return redstoneMode;
     }

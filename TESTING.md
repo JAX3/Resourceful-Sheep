@@ -69,6 +69,12 @@ Earlier, also in a live world, `generate all` followed by `generate dedupe` went
 
 This run also caught and fixed a bug: tag-based definitions crashed a live `/reload`, because the empty-tag check ran before Minecraft had bound the new tags.
 
+### Jade integration (real client + dedicated server)
+- Jade 26.3.5 loads the Resourceful Sheep plugin on both the game-test server and the client, and all 24 game tests still pass with Jade installed.
+- In the client, looking at a diamond-infused sheep showed "Infused: Diamond" and "9 shearing(s) left".
+- Looking at a running separator showed "Status: Processing", "Usage: 200 FE/t", its contents, Jade's energy bar and a progress bar.
+- The first client run failed: Jade 26.3 rejects one provider class that does both server data and tooltip. Splitting it into separate server and client providers fixed it. The dedicated-server test alone would not have caught this.
+
 ## Not tested / known limitations
 - **Real multiplayer** with two separate machines was not run. Instead:
   - Every sync path ran in the integrated server, including definitions, recipes, attachment sync and menu data.
