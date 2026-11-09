@@ -143,7 +143,7 @@ Other useful tasks:
 ## Configuration
 
 ### Global config (per world, synced to clients)
-`<world>/syncedconfig/resourcefulsheep-synced.toml` (you can also edit it in-game from *Mods → Resourceful Sheep → Config*).
+`config/resourcefulsheep-synced.toml`, synced to every client. A copy placed in `<world>/syncedconfig/` overrides it for that world only. You can also edit it in-game from *Mods → Resourceful Sheep → Config*.
 
 **`[sheep]`**
 
@@ -317,7 +317,7 @@ To give a data-pack resource its own icon, ship a resource pack that overrides `
 | Client/server split | Client code lives in `client/` and is registered from a `@Mod(dist = CLIENT)` entry point |
 
 ### API changes vs older versions (documented deviations)
-- **Config type.** In current FML the per-world, synced config type is `ModConfig.Type.SYNCED` (it used to be `SERVER`), so the file lives in `<world>/syncedconfig/`.
+- **Config type.** In current FML the per-world, synced config type is `ModConfig.Type.SYNCED` (it used to be `SERVER`), so the file is `config/resourcefulsheep-synced.toml`, and a copy in `<world>/syncedconfig/` overrides it per world.
 - **Energy capability.** Energy uses NeoForge's transfer API (`EnergyHandler`, `Capabilities.Energy.BLOCK`) instead of the removed `IEnergyStorage`. It is still Forge Energy, so FE cables interoperate.
 - **Item capability.** Items use `ResourceHandler<ItemResource>` (`Capabilities.Item.BLOCK`) instead of `IItemHandler`.
 - **No `wool_texture` field.** The illustrative schema's `wool_texture` field is replaced by the item-model `select` mechanism described above. Item models in 26.x are resource-pack data, not something a data pack can set.

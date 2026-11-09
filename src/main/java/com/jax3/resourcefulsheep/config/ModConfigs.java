@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /**
  * All global configuration for Resourceful Sheep.
  *
- * <p>The {@link #SERVER} config is per-world ({@code <world>/syncedconfig/resourcefulsheep-synced.toml}) and is
+ * <p>The {@link #SERVER} config ({@code config/resourcefulsheep-synced.toml}; a copy in {@code <world>/syncedconfig/} overrides it per world) and is
  * synchronised to connected clients by NeoForge, so values that affect what clients display (JEI energy figures,
  * wool colour blending) stay consistent in multiplayer. {@link #CLIENT} holds purely visual preferences.</p>
  *
